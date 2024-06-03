@@ -5,6 +5,7 @@ from strategies import hard_hand_strategy, soft_hand_strategy, pair_strategy
 import time
 import random
 import csv
+import numpy as np
 
 class BlackjackGame:
     def __init__(self, deck, running_count):
@@ -140,7 +141,7 @@ if __name__ == "__main__":
     results = {"player_blackjack": 0, "player_bust": 0, "dealer_win": 0, "tie": 0}
     total_wins = {i: 0 for i in range(1, 10)}
     total_ties = 0
-    num_simulations = 100000
+    num_simulations = 10000
     base_bet = 10
     total_winnings = 0
     total_losses = 0
@@ -248,24 +249,28 @@ if __name__ == "__main__":
     print(f"Dealer win rate: {dealer_win_rate * 100:.2f}%")
     print(f"Tie rate: {tie_rate * 100:.2f}%")
     print(f"Expected value per game: {expected_value:.4f}")
-    print(f"House edge: {house_edge:.2f}%")
+    print(f"House edge: {house_edge:.3f}%")
 
     print(f"Total Profit Amount: {net_profit:.4f}")
     print(f"Total Bet Amount: {total_bets:.4f}")
-
+    variance = np.var(prof, ddof=1)  # ddof=1 for sample variance
+    print(f"Variance of profit: {variance:.4f}")
+    std_dev = np.std(prof, ddof=1)  # ddof=1 for sample standard deviation
+    print(f"Standard Deviation of profit: {std_dev:.4f}")
     
     print(f"\nTime taken for simulation: {elapsed_time} seconds")
 
 
     # Plot the profit against the number of rounds played
     plt.figure(figsize=(10, 6))
-    plt.plot(range(num_simulations), prof, linestyle='-', marker='o')
+    plt.plot(range(num_simulations), prof, linestyle='-', marker='')
     plt.xlabel('Rounds Played')
     plt.ylabel('Profit')
     plt.title('Profit as a Function of Rounds Played')
     plt.grid(True)
     plt.show()
 
+    '''
     # Plot the running count against the number of rounds played
     plt.figure(figsize=(10, 6))
     plt.plot(range(num_simulations), running_counts, linestyle='-', marker='o')
@@ -284,3 +289,4 @@ if __name__ == "__main__":
     plt.title('Bet Amount as a Function of Running Count')
     plt.grid(True)
     plt.show()
+    '''
