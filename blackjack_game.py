@@ -68,11 +68,11 @@ class BlackjackGame:
         score = 0
         aces = 0
         for card in hand:
-            score += 10  
+            score += card.value()
             if card.number == "Ace":
                 aces += 1
         while score > 21 and aces:
-            score -= 1
+            score -= 10
             aces -= 1
         return score
     
