@@ -105,7 +105,9 @@ class BlackjackGame:
             aces -= 1
         return any(card.number == "Ace" for card in hand) and score <= 21
 
-
+    def show_hand(self, hand):
+        return [(card.number, card.suit) for card in hand]
+    
     def dealer_turn(self):
         pass
 
