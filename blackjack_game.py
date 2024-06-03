@@ -75,6 +75,35 @@ class BlackjackGame:
             score -= 1
             aces -= 1
         return score
+    
+    def basic_strategy(self, hand):
+        player_score = self.calculate_score(hand)
+        dealer_upcard_value = self.dealer_hand[0].value()
+
+        if len(hand) == 2 and hand[0].number == hand[1].number:
+            return self.pair_strategy(player_score, dealer_upcard_value)
+
+        if self.is_soft_hand(hand):
+            return self.soft_hand_strategy(player_score, dealer_upcard_value)
+
+        return self.hard_hand_strategy(player_score, dealer_upcard_value)
+        
+    def pair_strategy(self, player_score, dealer_upcard_value):
+        return pair_strategy.get(player_score, {}).get(dealer_upcard_value)
+
+    def soft_hand_strategy(self, player_score, dealer_upcard_value):
+        return soft_hand_strategy.get(player_score, {}).get(dealer_upcard_value)
+
+    def hard_hand_strategy(self, player_score, dealer_upcard_value):
+        return hard_hand_strategy.get(player_score, {}).get(dealer_upcard_value)
+
+    def is_soft_hand(self, hand):
+        score = sum(card.value() for card in hand)
+        aces = sum(1 for card in hand if card.number == "Ace")
+        while score > 21 and aces > 0:
+            score -= 10
+            aces -= 1
+        return any(card.number == "Ace" for card in hand) and score <= 21
 
 
     def dealer_turn(self):
