@@ -109,7 +109,29 @@ class BlackjackGame:
         return [(card.number, card.suit) for card in hand]
     
     def dealer_turn(self):
-        pass
+        while self.calculate_score(self.dealer_hand) < 17 or (self.calculate_score(self.dealer_hand) == 17 and self.is_soft_hand(self.dealer_hand)):
+            self.dealer_hand.append(self.deal_card())
 
     def determine_winner(self):
-        pass
+        player_scores = [self.calculate_score(hand) for hand in [self.player_hand] + self.split_hands]
+        dealer_score = self.calculate_score(self.dealer_hand)
+
+        player_wins = 0
+        ties = 0
+
+        for score in player_scores:
+            if score > 21:
+                continue
+            if dealer_score > 21 or score > dealer_score:
+                player_wins += 1
+            elif score == dealer_score:
+                ties += 1
+
+        # The result will be separated into parts after
+        if player_wins > 0 and ties > 0:
+            return f"{player_wins}player_win_{ties}tie"
+        if player_wins > 0:
+            return f"{player_wins}player_win"
+        if ties == len(player_scores):
+            return "tie"
+        return "dealer_win"
