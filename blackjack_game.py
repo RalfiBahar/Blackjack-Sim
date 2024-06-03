@@ -48,8 +48,34 @@ class BlackjackGame:
     def calculate_score(self):
         pass
 
-    def play_hand(self):
-        pass
+    def play_hand(self, hand):
+        while self.calculate_score(hand) < 21:
+            action = self.basic_strategy(hand)
+            if action == "hit":
+                hand.append(self.deal_card())
+            elif action == "stand":
+                break
+            elif action == "split":
+                self.split_hand(hand)
+                break
+
+    def split_hand(self, hand):
+        split_card = hand.pop()
+        self.split_hands.append([split_card, self.deal_card()])
+        hand.append(self.deal_card())
+
+    def calculate_score(self, hand):
+        score = 0
+        aces = 0
+        for card in hand:
+            score += 10  
+            if card.number == "Ace":
+                aces += 1
+        while score > 21 and aces:
+            score -= 1
+            aces -= 1
+        return score
+
 
     def dealer_turn(self):
         pass
