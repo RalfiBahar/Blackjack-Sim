@@ -12,7 +12,7 @@ class BlackjackGame:
         self.player_hand = []
         self.dealer_hand = []
         self.split_hands = []
-        self.running_count = running_count
+        self.running_count = running_count # unrelated to amount of decks
 
     def start_game(self):
         self.player_hand = [self.deal_card(), self.deal_card()]
@@ -35,7 +35,15 @@ class BlackjackGame:
         return self.determine_winner()
     
     def deal_card(self):
-        pass
+        card = self.deck.deal_card()
+        self.update_running_count(card)
+        return card
+    
+    def update_running_count(self, card):
+        if card.number in [2, 3, 4, 5, 6]:
+            self.running_count += 1
+        elif card.number in [10, "Jack", "Queen", "King", "Ace"]:
+            self.running_count -= 1
 
     def calculate_score(self):
         pass
