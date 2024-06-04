@@ -66,6 +66,27 @@ def main():
 
         st.pyplot(fig)
 
+        st.write("### Running Count Distribution")
+        fig, ax = plt.subplots(figsize=(12, 6))
+
+        # Bar plot of Running Count distribution
+        running_count_stats = {
+        'Mean': combined_data['Running Count'].mean(),
+        'Variance': combined_data['Running Count'].var(),
+        'Standard Deviation': combined_data['Running Count'].std()
+        }
+        # Frequency distribution of Running Counts
+        running_count_distribution = combined_data['Running Count'].value_counts().reset_index()
+        running_count_distribution.columns = ['Running Count', 'Frequency']
+
+        ax.bar(running_count_distribution['Running Count'], running_count_distribution['Frequency'], color='green')
+        ax.set_xlabel('Running Count')
+        ax.set_ylabel('Frequency')
+        ax.set_title('Running Count Distribution')
+        ax.grid(True)
+        st.pyplot(fig)
+        st.write(running_count_stats)
+
         st.write("### Correlation Matrix")
         st.write(data.corr())
 
