@@ -81,7 +81,6 @@ def main():
         st.pyplot(fig)
 
         mean_net_profit_per_bet = combined_data.groupby('Bet Amount')['Current Game Net Profit'].mean().reset_index()
-        st.dataframe(data['Bet Amount'])
         st.write("### Mean Current Game Net Profit per Bet Amount")
         fig, ax = plt.subplots(figsize=(12, 6))
 
