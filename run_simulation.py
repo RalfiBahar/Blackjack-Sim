@@ -37,7 +37,7 @@ def run_simulation(num_games, base_bet, initial_bankroll):
         "Total Profit Amount": [],  
         "Total Bet Amount": [],  
         "Final Bankroll": [],
-        "Number of Bankrupcies" : []
+        "Number of Bankruptcies" : []
     }
 
 
@@ -72,7 +72,7 @@ def run_simulation(num_games, base_bet, initial_bankroll):
 
         # Check if bankroll can cover the bet
         if bankroll < bet_amount:
-            st.write("Bankroll depleted! Simulation stopped.")
+            #st.write("Bankroll depleted! Simulation stopped.")
             num_bankrupcies += 1
             break
 
@@ -137,7 +137,7 @@ def run_simulation(num_games, base_bet, initial_bankroll):
     data["Total Profit Amount"].append(net_profit)
     data["Total Bet Amount"].append(total_bets)
     data["Final Bankroll"].append(bankroll)
-    data["Number of Bankrupcies"].append(num_bankrupcies)
+    data["Number of Bankruptcies"].append(num_bankrupcies)
 
     # Ensure all arrays have the same length
     max_length = max(len(value) for value in data.values())

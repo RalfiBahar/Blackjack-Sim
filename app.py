@@ -17,13 +17,15 @@ def main():
     if st.button("Run Simulation"):
         aggregated_data = []
         total_bankruptcies = 0
+        progress_placeholder = st.empty() 
+
         for i in range(num_simulations):
             data = run_simulation(num_games, base_bet, initial_bankroll)
-            bankruptcies = data["Number of Bankruptcies"].iloc[-1]
-            total_bankruptcies += bankruptcies
 
-            if i % (num_simulations / 10) == 0:
-                st.write("{}% Done".format((i / num_simulations) * 100))
+            total_bankruptcies += data["Number of Bankruptcies"].iloc[-1]
+
+            if i % (num_simulations / 100) == 0:
+                progress_placeholder.text("{}% Done".format(int((i / num_simulations) * 100)))
             aggregated_data.append(data)
 
         # Combine and average the results
