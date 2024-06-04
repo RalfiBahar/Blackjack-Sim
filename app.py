@@ -4,15 +4,16 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from run_simulation import run_simulation
+from constants import GAMES_PLAYED_PER_HOUR, BET_MULTIPLIER
 
 def main():
     st.title("Blackjack Simulation Analysis")
 
     num_games = st.number_input("Number of Games to Simulate", min_value=1, max_value=1000000, value=5000)
     initial_bankroll = st.number_input("Initial Bankroll", min_value=1, max_value=1000000, value=10000)
-    num_simulations = st.number_input("Number of Simulations", min_value=1, max_value=10000, value=5000)
+    num_simulations = st.number_input("Number of Simulations", min_value=1, max_value=100000, value=5000)
 
-    base_bet = initial_bankroll * 0.001
+    base_bet = initial_bankroll * BET_MULTIPLIER
 
     if st.button("Run Simulation"):
         aggregated_data = []
@@ -41,6 +42,7 @@ def main():
         st.write(f"Number of Bankrolls depleted: {total_bankruptcies}")
         st.write(f"Expected value per game: {data['Expected Value Per Game'].mean():.4f}")
         st.write(f"House edge: {data['House Edge'].mean():.2f}%")
+        st.write(f"Money earned per hour: {data['Expected Value Per Game'].mean() * GAMES_PLAYED_PER_HOUR:.3f}$")
         st.write(f"Total Profit Amount: {data['Total Profit Amount'].mean():.4f}")
         st.write(f"Total Bet Amount: {data['Total Bet Amount'].mean():.4f}")
         st.write(f"Final Bankroll: {data['Final Bankroll'].mean():.2f}")

@@ -52,7 +52,7 @@ def run_simulation(num_games, base_bet, initial_bankroll):
 
         # TASK: give ability to make user create/choose custom bet spread 
         if running_count <= -1:
-            bet_amount = base_bet
+            bet_amount = 0#base_bet
         elif running_count == 0 or running_count == 1:
             bet_amount = base_bet
         elif running_count == 2:
