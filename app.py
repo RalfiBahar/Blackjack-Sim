@@ -146,16 +146,20 @@ def main():
         ax.grid(True)
         st.pyplot(fig)
 
-        '''
-        st.write("### Running Count vs. Current Game Net Profit (Density Plot)")
-        fig, ax = plt.subplots(figsize=(12, 6))
-        sns.kdeplot(x=combined_data['Running Count'], y=combined_data['Current Game Net Profit'], cmap="Greens", fill=True, ax=ax)
+        ###################
+        st.write("### Running Count vs. Current Game Net Profit Density (Logarithmic)")
+        fig, ax = plt.subplots(figsize=(12, 6))        
+        hb = ax.hexbin(combined_data['Running Count'], combined_data['Current Game Net Profit'], gridsize=25, cmap='Blues', bins='log')        
+        cb = fig.colorbar(hb, ax=ax)
+        cb.set_label('Counts')        
+        y_max = max(abs(combined_data['Current Game Net Profit'].min()), combined_data['Current Game Net Profit'].max()) * 1.2
+        ax.set_ylim(-y_max, y_max)
         ax.set_xlabel('Running Count')
         ax.set_ylabel('Current Game Net Profit')
-        ax.set_title('Running Count vs. Current Game Net Profit (Density Plot)')
+        ax.set_title('Running Count vs. Current Game Net Profit Density (Logarithmic)')
         ax.grid(True)
         st.pyplot(fig)
-        '''
+        ###################
 
         st.write("### Current Bankroll per Game")
         fig, ax = plt.subplots(figsize=(12, 6))
