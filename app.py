@@ -59,7 +59,7 @@ def main():
         ax[0].set_title('Distribution of Total Net Profit')
 
         # Histogram for Current Game Net Profit
-        ax[1].hist(data['Current Game Net Profit'], bins=20, color='green', alpha=0.7)
+        ax[1].hist(data['Current Game Net Profit'], bins=1000, color='green', alpha=0.7)
         ax[1].set_xlabel('Current Game Net Profit')
         ax[1].set_ylabel('Frequency')
         ax[1].set_title('Distribution of Current Game Net Profit')
@@ -80,16 +80,19 @@ def main():
         ax.grid(True)
         st.pyplot(fig)
 
-        mean_net_profit_per_bet = data.groupby('Bet Amount')['Current Game Net Profit'].mean().reset_index()
-
+        mean_net_profit_per_bet = combined_data.groupby('Bet Amount')['Current Game Net Profit'].mean().reset_index()
+        st.dataframe(data['Bet Amount'])
         st.write("### Mean Current Game Net Profit per Bet Amount")
         fig, ax = plt.subplots(figsize=(12, 6))
 
         # Calculate bar width as a fraction of the x-axis range
         x_range = mean_net_profit_per_bet['Bet Amount'].max() - mean_net_profit_per_bet['Bet Amount'].min()
-        bar_width = x_range / len(mean_net_profit_per_bet) * 0.8  # Adjust the 0.8 to control the bar width
+        bar_width = x_range / len(mean_net_profit_per_bet) * 0.4  # Adjust the 0.8 to control the bar width
 
         ax.bar(mean_net_profit_per_bet['Bet Amount'], mean_net_profit_per_bet['Current Game Net Profit'], width=bar_width, color='blue')
+        ax.set_xticks(mean_net_profit_per_bet['Bet Amount'])
+        ax.set_xticklabels(mean_net_profit_per_bet['Bet Amount'])
+        plt.xticks(rotation=45)
         ax.set_xlabel('Bet Amount')
         ax.set_ylabel('Mean Current Game Net Profit')
         ax.set_title('Mean Current Game Net Profit per Bet Amount')
@@ -99,7 +102,9 @@ def main():
 
         st.write("### Running Count vs. Current Game Net Profit")
         fig, ax = plt.subplots(figsize=(12, 6))
-        ax.scatter(data['Running Count'], data['Current Game Net Profit'], alpha=0.5, color='green')
+        ax.scatter(combined_data['Running Count'], combined_data['Current Game Net Profit'], alpha=0.5, color='green')
+        y_max = max(abs(combined_data['Current Game Net Profit'].min()), combined_data['Current Game Net Profit'].max()) * 1.2
+        ax.set_ylim(-y_max, y_max)
         ax.set_xlabel('Running Count')
         ax.set_ylabel('Current Game Net Profit')
         ax.set_title('Running Count vs. Current Game Net Profit')
@@ -108,22 +113,25 @@ def main():
 
         st.write("### Running Count vs. Current Game Net Profit")
         fig, ax = plt.subplots(figsize=(12, 6))
-        ax.scatter(data['Running Count'], data['Current Game Net Profit'], s=10, alpha=0.3, color='green')
+        ax.scatter(combined_data['Running Count'], combined_data['Current Game Net Profit'], s=10, alpha=0.3, color='green')
+        y_max = max(abs(combined_data['Current Game Net Profit'].min()), combined_data['Current Game Net Profit'].max()) * 1.2
+        ax.set_ylim(-y_max, y_max)
         ax.set_xlabel('Running Count')
         ax.set_ylabel('Current Game Net Profit')
         ax.set_title('Running Count vs. Current Game Net Profit')
         ax.grid(True)
         st.pyplot(fig)
 
-
+        '''
         st.write("### Running Count vs. Current Game Net Profit (Density Plot)")
         fig, ax = plt.subplots(figsize=(12, 6))
-        sns.kdeplot(x=data['Running Count'], y=data['Current Game Net Profit'], cmap="Greens", fill=True, ax=ax)
+        sns.kdeplot(x=combined_data['Running Count'], y=combined_data['Current Game Net Profit'], cmap="Greens", fill=True, ax=ax)
         ax.set_xlabel('Running Count')
         ax.set_ylabel('Current Game Net Profit')
         ax.set_title('Running Count vs. Current Game Net Profit (Density Plot)')
         ax.grid(True)
         st.pyplot(fig)
+        '''
 
         st.write("### Current Bankroll per Game")
         fig, ax = plt.subplots(figsize=(12, 6))

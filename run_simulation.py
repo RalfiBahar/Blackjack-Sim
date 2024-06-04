@@ -51,8 +51,14 @@ def run_simulation(num_games, base_bet, initial_bankroll):
         game = BlackjackGame(deck, running_count)    
 
         # TASK: give ability to make user create/choose custom bet spread 
+        '''
+        if running_count <= 1:
+            bet_amount = base_bet * 0.1
+        else:
+            bet_amount = base_bet * (running_count  - 1)
+        '''
         if running_count <= -1:
-            bet_amount = 0#base_bet
+            bet_amount = base_bet
         elif running_count == 0 or running_count == 1:
             bet_amount = base_bet
         elif running_count == 2:
@@ -77,6 +83,7 @@ def run_simulation(num_games, base_bet, initial_bankroll):
             break
 
         bet_sizes.append(bet_amount)
+        
         bets_vs_running_count.append((running_count, bet_amount))  # Track the bet amount and running count
 
         result = game.start_game()
@@ -125,7 +132,10 @@ def run_simulation(num_games, base_bet, initial_bankroll):
     dealer_win_rate = results["dealer_win"] / num_games
     tie_rate = (results["tie"] + total_ties) / num_games
     expected_value_per_game = net_profit / num_games
-    expected_value_per_bet = net_profit / total_bets
+    if total_bets == 0:
+        expected_value_per_bet = 0
+    else:
+        expected_value_per_bet = net_profit / total_bets
     house_edge = -expected_value_per_bet * 100
 
     # Append summary statistics to the data dictionary
