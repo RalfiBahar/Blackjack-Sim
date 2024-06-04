@@ -11,6 +11,7 @@ def run_simulation(num_games, base_bet, initial_bankroll):
     total_winnings = 0
     total_losses = 0
     total_bets = 0
+    num_bankrupcies = 0
 
     bankroll = initial_bankroll
     running_count = 0
@@ -35,8 +36,11 @@ def run_simulation(num_games, base_bet, initial_bankroll):
         "House Edge": [], 
         "Total Profit Amount": [],  
         "Total Bet Amount": [],  
-        "Final Bankroll": []  
+        "Final Bankroll": [],
+        "Number of Bankrupcies" : []
     }
+
+
 
     for _ in range(num_games):
         # TASK: Instead of 15 make random int between some to numbers
@@ -48,7 +52,7 @@ def run_simulation(num_games, base_bet, initial_bankroll):
 
         # TASK: give ability to make user create/choose custom bet spread 
         if running_count <= -1:
-            bet_amount = 0#base_bet
+            bet_amount = base_bet
         elif running_count == 0 or running_count == 1:
             bet_amount = base_bet
         elif running_count == 2:
@@ -69,6 +73,7 @@ def run_simulation(num_games, base_bet, initial_bankroll):
         # Check if bankroll can cover the bet
         if bankroll < bet_amount:
             st.write("Bankroll depleted! Simulation stopped.")
+            num_bankrupcies += 1
             break
 
         bet_sizes.append(bet_amount)
@@ -132,6 +137,7 @@ def run_simulation(num_games, base_bet, initial_bankroll):
     data["Total Profit Amount"].append(net_profit)
     data["Total Bet Amount"].append(total_bets)
     data["Final Bankroll"].append(bankroll)
+    data["Number of Bankrupcies"].append(num_bankrupcies)
 
     # Ensure all arrays have the same length
     max_length = max(len(value) for value in data.values())

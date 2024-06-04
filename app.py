@@ -10,14 +10,20 @@ def main():
 
     num_games = st.number_input("Number of Games to Simulate", min_value=1, max_value=1000000, value=5000)
     initial_bankroll = st.number_input("Initial Bankroll", min_value=1, max_value=1000000, value=10000)
-    num_simulations = st.number_input("Number of Simulations", min_value=5, max_value=10000, value=5000)
+    num_simulations = st.number_input("Number of Simulations", min_value=1, max_value=10000, value=5000)
 
     base_bet = initial_bankroll * 0.001
 
     if st.button("Run Simulation"):
         aggregated_data = []
-        for _ in range(num_simulations):
+        total_bankruptcies = 0
+        for i in range(num_simulations):
             data = run_simulation(num_games, base_bet, initial_bankroll)
+            bankruptcies = data["Number of Bankruptcies"].iloc[-1]
+            total_bankruptcies += bankruptcies
+
+            if i % (num_simulations / 10) == 0:
+                st.write("{}% Done".format((i / num_simulations) * 100))
             aggregated_data.append(data)
 
         # Combine and average the results
@@ -28,6 +34,7 @@ def main():
         st.write(f"Player win rate: {data['Player Win Rate'].mean():.2f}%")
         st.write(f"Dealer win rate: {data['Dealer Win Rate'].mean():.2f}%")
         st.write(f"Tie rate: {data['Tie Rate'].mean():.2f}%")
+        st.write(f"Number of Bankrolls depleted: {total_bankruptcies}")
         st.write(f"Expected value per game: {data['Expected Value Per Game'].mean():.4f}")
         st.write(f"House edge: {data['House Edge'].mean():.2f}%")
         st.write(f"Total Profit Amount: {data['Total Profit Amount'].mean():.4f}")
