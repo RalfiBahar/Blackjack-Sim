@@ -28,6 +28,8 @@ def main():
                 progress_placeholder.text("{}% Done".format(int((i / num_simulations) * 100)))
             aggregated_data.append(data)
 
+        # Loop guarantee
+        progress_placeholder.text("{}% Done".format(100))
         # Combine and average the results
         combined_data = pd.concat(aggregated_data)
         data = combined_data.groupby(combined_data.index).mean()
