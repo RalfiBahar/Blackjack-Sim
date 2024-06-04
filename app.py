@@ -25,12 +25,11 @@ def main():
 
             total_bankruptcies += data["Number of Bankruptcies"].iloc[-1]
 
-            if i % (num_simulations / 100) == 0:
-                progress_placeholder.text("{}% Done".format(int((i / num_simulations) * 100)))
+            progress_placeholder.text(f"{((i / num_simulations) * 100):.1f}% Done")
             aggregated_data.append(data)
 
         # Loop guarantee
-        progress_placeholder.text("{}% Done".format(100))
+        progress_placeholder.text("{}% Done".format(100.0))
         # Combine and average the results
         combined_data = pd.concat(aggregated_data)
         data = combined_data.groupby(combined_data.index).mean()
