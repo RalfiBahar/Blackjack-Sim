@@ -152,6 +152,7 @@ if __name__ == "__main__":
     prof = []
     running_counts = []
     bets_vs_running_count = []
+    curr_game_net_profits = []
 
     start_time = time.time()
 
@@ -222,6 +223,7 @@ if __name__ == "__main__":
                 results["tie"] += 1
 
             net_profit = total_winnings - total_losses  # Calculate net profit
+            curr_game_net_profits.append(curr_game_net_profit)
             print(f'Total Net Profit: {net_profit} - Current Game Net Profit: {curr_game_net_profit} - Count: {game.running_count} - Bet: {bet_amount}')
             writer.writerow([net_profit, curr_game_net_profit, game.running_count, bet_amount])
 
@@ -253,9 +255,9 @@ if __name__ == "__main__":
 
     print(f"Total Profit Amount: {net_profit:.4f}")
     print(f"Total Bet Amount: {total_bets:.4f}")
-    variance = np.var(prof, ddof=1)  # ddof=1 for sample variance
+    variance = np.var(curr_game_net_profits, ddof=1)  # ddof=1 for sample variance
     print(f"Variance of profit: {variance:.4f}")
-    std_dev = np.std(prof, ddof=1)  # ddof=1 for sample standard deviation
+    std_dev = np.std(curr_game_net_profits, ddof=1)  # ddof=1 for sample standard deviation
     print(f"Standard Deviation of profit: {std_dev:.4f}")
     
     print(f"\nTime taken for simulation: {elapsed_time} seconds")
