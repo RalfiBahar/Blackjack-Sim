@@ -81,6 +81,10 @@ def main():
         st.pyplot(fig)
 
         mean_net_profit_per_bet = combined_data.groupby('Bet Amount')['Current Game Net Profit'].mean().reset_index()
+        frequency = combined_data['Bet Amount'].value_counts().reset_index()
+        frequency.columns = ['Bet Amount', 'Frequency']
+        mean_net_profit_per_bet = pd.merge(mean_net_profit_per_bet, frequency, on='Bet Amount')
+        
         st.write("### Mean Current Game Net Profit per Bet Amount")
         fig, ax = plt.subplots(figsize=(12, 6))
 
