@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from run_simulation import run_simulation
 from constants import GAMES_PLAYED_PER_HOUR, BET_MULTIPLIER
+from utils import calculate_required_games
+import math
 
 def main():
     st.title("Blackjack Simulation Analysis")
@@ -38,13 +40,22 @@ def main():
         st.write(f"Player win rate: {data['Player Win Rate'].mean():.2f}%")
         st.write(f"Dealer win rate: {data['Dealer Win Rate'].mean():.2f}%")
         st.write(f"Tie rate: {data['Tie Rate'].mean():.2f}%")
-        st.write(f"Number of Bankrolls depleted: {total_bankruptcies}")
+        st.write(f"Number of Bankrolls depleted: {total_bankruptcies} - Percentage: {total_bankruptcies / (num_simulations * num_games) * 100:.4f}%")
         st.write(f"Expected value per game: {data['Expected Value Per Game'].mean():.4f}")
         st.write(f"House edge: {data['House Edge'].mean():.2f}%")
         st.write(f"Money earned per hour: {data['Expected Value Per Game'].mean() * GAMES_PLAYED_PER_HOUR:.3f}$")
         st.write(f"Total Profit Amount: {data['Total Profit Amount'].mean():.4f}")
         st.write(f"Total Bet Amount: {data['Total Bet Amount'].mean():.4f}")
         st.write(f"Final Bankroll: {data['Final Bankroll'].mean():.2f}")
+
+        stdd = combined_data['Current Game Net Profit'].std()
+        m = combined_data['Current Game Net Profit'].mean()
+        size = combined_data['Current Game Net Profit'].size
+        me = 0.75 * (stdd / math.sqrt(size))
+        st.write(f'Mean of curr game net prof: {m}')
+        st.write(f'Conf interval: {m - me} - {m + me}')
+        req_games = calculate_required_games(stdd, 0.2, 0.75)
+        st.write(f'Amoount of games to achieve EV: {req_games}')
 
         st.write("### Descriptive Statistics")
         st.write(data.describe())
@@ -103,9 +114,11 @@ def main():
 
         mean_net_profit_per_bet = combined_data.groupby('Bet Amount')['Current Game Net Profit'].mean().reset_index()
         frequency = combined_data['Bet Amount'].value_counts().reset_index()
+        # Add mean freq per sim
         frequency.columns = ['Bet Amount', 'Frequency']
         mean_net_profit_per_bet = pd.merge(mean_net_profit_per_bet, frequency, on='Bet Amount')
-        
+        mean_net_profit_per_bet['Percentage of Running Count'] = mean_net_profit_per_bet['Frequency'] / (num_simulations * num_games)
+
         st.write("### Mean Current Game Net Profit per Bet Amount")
         fig, ax = plt.subplots(figsize=(12, 6))
 

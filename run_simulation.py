@@ -53,14 +53,14 @@ def run_simulation(num_games, base_bet, initial_bankroll):
         # TASK: give ability to make user create/choose custom bet spread 
         '''
         if running_count <= 1:
-            bet_amount = base_bet * 0.1
+            bet_amount = base_bet * 1
         else:
-            bet_amount = base_bet * (running_count  - 1)
+            bet_amount = base_bet * (running_count  - 1) * 2
         '''
         if running_count <= -1:
-            bet_amount = base_bet
+            bet_amount = 0#base_bet
         elif running_count == 0 or running_count == 1:
-            bet_amount = base_bet
+            bet_amount = 0#base_bet
         elif running_count == 2:
             bet_amount = base_bet * 4
         elif running_count == 3:
@@ -75,7 +75,7 @@ def run_simulation(num_games, base_bet, initial_bankroll):
             bet_amount = base_bet * 32
         else:
             bet_amount = base_bet
-
+        
         # Check if bankroll can cover the bet
         if bankroll < bet_amount:
             #st.write("Bankroll depleted! Simulation stopped.")
