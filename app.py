@@ -70,7 +70,7 @@ def main():
         ax[0].set_title('Distribution of Total Net Profit')
 
         # Histogram for Current Game Net Profit
-        ax[1].hist(data['Current Game Net Profit'], bins=1000, color='green', alpha=0.7)
+        ax[1].hist(data['Current Game Net Profit'], bins=100, color='green', alpha=0.7)
         ax[1].set_xlabel('Current Game Net Profit')
         ax[1].set_ylabel('Frequency')
         ax[1].set_title('Distribution of Current Game Net Profit')

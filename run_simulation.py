@@ -58,9 +58,9 @@ def run_simulation(num_games, base_bet, initial_bankroll):
             bet_amount = base_bet * (running_count  - 1) * 2
         '''
         if running_count <= -1:
-            bet_amount = 0#base_bet
+            bet_amount = base_bet
         elif running_count == 0 or running_count == 1:
-            bet_amount = 0#base_bet
+            bet_amount = base_bet
         elif running_count == 2:
             bet_amount = base_bet * 4
         elif running_count == 3:
