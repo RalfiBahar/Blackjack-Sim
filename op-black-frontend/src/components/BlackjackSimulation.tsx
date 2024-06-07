@@ -139,7 +139,7 @@ const BlackjackSimulation: React.FC<BlackjackSimulationProps> = ({
     }
   };
   return (
-    <div>
+    <div className="w-full">
       <h1>Blackjack Simulation Analysis</h1>
       <SimulationForm
         initialData={initialData}
