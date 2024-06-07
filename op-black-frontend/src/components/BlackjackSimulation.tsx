@@ -1,117 +1,162 @@
 "use client";
 
 import React, { useState } from "react";
-import runSimulation from "../run_simulation";
-import { GAMES_PLAYED_PER_HOUR, BET_MULTIPLIER } from "../constants";
-import { calculateRequiredGames } from "../utils";
-import { Line, Bar, Scatter } from "react-chartjs-2";
-import { Chart, registerables } from "chart.js";
+import SimulationForm from "../components/SimulationForm";
+import { InitialData, SimulationParams } from "./types";
 import {
-  CurrentBankrollChart,
-  CountCurrNetProfitChart,
-  BetAmountFrequencyChart,
-  CurrNetProfitPerBetChart,
+  GeneralStats,
+  TotalNetProfitDistributionChart,
   CumulativeNetProfitChart,
-  RunningCountStatistics,
+  CurrNetProfitDistributionChart,
   RunningCountDistributionChart,
   RunningCountDistributionStatistics,
-  CurrNetProfitDistributionChart,
-  TotalNetProfitDistributionChart,
-  GeneralStats,
-} from ".";
+  RunningCountStatistics,
+  CurrNetProfitPerBetChart,
+  BetAmountFrequencyChart,
+  CountCurrNetProfitChart,
+  CurrentBankrollChart,
+} from "../components";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import CustomProgressBar from "../components/CustomProgressBar";
 
-import CustomProgressBar from "./CustomProgressBar";
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
-Chart.register(...registerables);
+interface BlackjackSimulationProps {
+  initialData: InitialData;
+}
 
-const BlackjackSimulation: React.FC = () => {
-  const [numGames, setNumGames] = useState<number>(5000);
-  const [initialBankroll, setInitialBankroll] = useState<number>(10000);
-  const [numSimulations, setNumSimulations] = useState<number>(5000);
-  const [results, setResults] = useState<any>(null);
-  const [aggregate, setAggregate] = useState<any>(null);
-  const [totalBankruptcies, setTotalBankruptcies] = useState<number>(0);
-  const [percentDoneSimulating, setPercentDoneSimulating] = useState<number>(0);
+const BlackjackSimulation: React.FC<BlackjackSimulationProps> = ({
+  initialData,
+}) => {
+  const [results, setResults] = useState<any>(initialData.results);
+  const [aggregate, setAggregate] = useState<any>(initialData.aggregate);
+  const [totalBankruptcies, setTotalBankruptcies] = useState<number>(
+    initialData.totalBankruptcies
+  );
+  const [percentDoneSimulating, setPercentDoneSimulating] = useState<number>(
+    initialData.percentDoneSimulating
+  );
 
-  const handleRunSimulation = async () => {
-    const baseBet = initialBankroll * BET_MULTIPLIER;
-    const aggregatedData: any[] = [];
-    let totalBankruptcies = 0;
-    let combinedResults: any = {};
+  const handleRunSimulation = async (simulationParams: SimulationParams) => {
+    setPercentDoneSimulating(0);
 
-    for (let i = 0; i < numSimulations; i++) {
-      const result = runSimulation(numGames, baseBet, initialBankroll);
-      setPercentDoneSimulating(((i + 1) / numSimulations) * 100);
-      totalBankruptcies += result.summary.numBankruptcies;
-      aggregatedData.push(result.data);
+    try {
+      const response = await fetch("/api/runSimulation", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(simulationParams),
+      });
+
+      if (!response.ok) {
+        console.error("Failed to fetch simulation results");
+        return;
+      }
+
+      const reader = response.body?.getReader();
+      if (!reader) {
+        console.error("Failed to get reader from response body");
+        return;
+      }
+
+      const textDecoder = new TextDecoder();
+      let done = false;
+      let partialData = "";
+      let combinedResults = null;
+      const aggregatedData = [];
+
+      while (!done) {
+        const { value, done: streamDone } = await reader.read();
+        done = streamDone;
+        if (value) {
+          partialData += textDecoder.decode(value, { stream: true });
+
+          let boundaryIndex;
+          while ((boundaryIndex = partialData.indexOf("}{")) !== -1) {
+            const jsonString = partialData.slice(0, boundaryIndex + 1);
+            partialData = partialData.slice(boundaryIndex + 1);
+            //console.log(jsonString);
+            try {
+              const parsedChunk = JSON.parse(jsonString);
+              if (parsedChunk.results) {
+                combinedResults = parsedChunk.results;
+                setTotalBankruptcies(parsedChunk.totalBankruptcies);
+              } else {
+                // Intermediate data
+                aggregatedData.push(parsedChunk);
+              }
+            } catch (error) {
+              console.error("Error parsing JSON:", error);
+            }
+          }
+        }
+      }
+
+      if (partialData.length > 0) {
+        try {
+          const parsedChunk = JSON.parse(partialData);
+          if (parsedChunk.results) {
+            combinedResults = parsedChunk.results;
+            setTotalBankruptcies(parsedChunk.totalBankruptcies);
+          } else {
+            // Intermediate data
+            aggregatedData.push(parsedChunk);
+          }
+        } catch (error) {
+          console.error("Error parsing final JSON object:", error);
+        }
+      }
+
+      setResults(combinedResults);
+      setAggregate(aggregatedData);
+      setPercentDoneSimulating(100);
+
+      //console.log("Results:", combinedResults);
+      //console.log("Aggregate:", aggregatedData);
+      //console.log("Total Bankruptcies:", totalBankruptcies);
+    } catch (error) {
+      console.error("Error running simulation:", error);
     }
-    setAggregate(aggregatedData);
-    // Aggregate data
-    const keys = Object.keys(aggregatedData[0]);
-    combinedResults = keys.reduce((acc: any, key: string) => {
-      acc[key] = aggregatedData.reduce((sum: number[], data: any) => {
-        return sum.map((val, index) => val + data[key][index]);
-      }, new Array(aggregatedData[0][key].length).fill(0));
-      return acc;
-    }, {});
-
-    // Calculate averages
-    Object.keys(combinedResults).forEach((key: string) => {
-      combinedResults[key] = combinedResults[key].map(
-        (val: number) => val / numSimulations
-      );
-    });
-
-    setResults(combinedResults);
-    setTotalBankruptcies(totalBankruptcies);
   };
-
   return (
     <div>
       <h1>Blackjack Simulation Analysis</h1>
-      <div>
-        <label>Number of Games to Simulate</label>
-        <input
-          type="number"
-          value={numGames}
-          onChange={(e) => setNumGames(Number(e.target.value))}
-          min={1}
-          max={1000000}
-        />
-      </div>
-      <div>
-        <label>Initial Bankroll</label>
-        <input
-          type="number"
-          value={initialBankroll}
-          onChange={(e) => setInitialBankroll(Number(e.target.value))}
-          min={1}
-          max={1000000}
-        />
-      </div>
-      <div>
-        <label>Number of Simulations</label>
-        <input
-          type="number"
-          value={numSimulations}
-          onChange={(e) => setNumSimulations(Number(e.target.value))}
-          min={1}
-          max={100000}
-        />
-      </div>
+      <SimulationForm
+        initialData={initialData}
+        onSubmit={handleRunSimulation}
+      />
       <div>
         <CustomProgressBar progress={percentDoneSimulating} />{" "}
         {/* Use the custom progress bar */}
       </div>
-      <button onClick={handleRunSimulation}>Run Simulation</button>
       {results && aggregate && (
         <div>
           <h1 className="text-xl">Simulation Results</h1>
           <GeneralStats
             results={results}
             totalBankruptcies={totalBankruptcies}
-            numGames={numGames}
-            numSimulations={numSimulations}
+            numGames={initialData.numGames}
+            numSimulations={initialData.numSimulations}
           />
           <div className="flex gap-4">
             <div className="w-1/2">
@@ -123,7 +168,7 @@ const BlackjackSimulation: React.FC = () => {
           </div>
           <CurrNetProfitDistributionChart data={results} />
           <RunningCountDistributionChart data={aggregate} />
-          <RunningCountDistributionStatistics data={aggregate} />*
+          <RunningCountDistributionStatistics data={aggregate} />
           <RunningCountStatistics data={aggregate} />
           <CurrNetProfitPerBetChart data={aggregate} />
           <BetAmountFrequencyChart data={aggregate} />
