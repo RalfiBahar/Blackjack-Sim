@@ -38,6 +38,7 @@ import {
   Grid,
   GridItem,
   SimpleGrid,
+  Button,
 } from "@chakra-ui/react";
 import { LIGHT_GREY } from "@/constants";
 
@@ -81,10 +82,13 @@ const BlackjackSimulation: React.FC<BlackjackSimulationProps> = ({
 
   return (
     <div className="w-full h-full bg-bg-grey">
-      <div className="w-full flex justify-center items-center mt-5">
-        <h1 className="text-white font-bold text-4xl self-center">
+      <div className="w-full flex justify-between items-center p-5">
+        <h1 className="text-white font-bold text-4xl">
           Blackjack Simulation Results
         </h1>
+        <Button size="lg" onClick={() => window.location.reload()}>
+          Run new simulation
+        </Button>
       </div>
 
       {results && aggregate && (
