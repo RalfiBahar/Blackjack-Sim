@@ -10,3 +10,4 @@ export { default as RunningCountDistributionStatistics } from "./graph-component
 export { default as CurrNetProfitDistributionChart } from "./graph-components/CurrNetProfitDistributionChart";
 export { default as TotalNetProfitDistributionChart } from "./graph-components/TotalNetProfitDistributionChart";
 export { default as GeneralStats } from "./graph-components/GeneralStats";
+export { default as CustomProgressBar } from "./CustomProgressBar";
