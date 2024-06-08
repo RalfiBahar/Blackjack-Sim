@@ -16,7 +16,7 @@ const GeneralStats: React.FC<{
       <p>Tie rate: {results["Tie Rate"][0].toFixed(2)}%</p>
       <p>
         Number of Bankrolls depleted: {totalBankruptcies} - Percentage:{" "}
-        {((totalBankruptcies / (numSimulations * numGames)) * 100).toFixed(4)}%
+        {((totalBankruptcies / numGames) * 100).toFixed(4)}%
       </p>
       <p>
         Expected value per game:{" "}

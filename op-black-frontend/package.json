@@ -9,9 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@chakra-ui/next-js": "^2.2.0",
+    "@chakra-ui/react": "^2.8.2",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
     "chart.js": "^4.4.3",
     "chartjs-plugin-downsample": "^1.1.0",
     "danfojs-node": "^1.1.2",
+    "framer-motion": "^11.2.10",
     "mathjs": "^13.0.0",
     "next": "14.2.3",
     "pandas-js": "^0.2.4",

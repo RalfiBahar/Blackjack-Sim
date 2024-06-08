@@ -7,11 +7,12 @@ const config: Config = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    colors: {
-      "bg-grey": "#37404A",
-      "light-grey": "#99A5B1",
+    extend: {
+      colors: {
+        "bg-grey": "#37404A",
+        "light-grey": "#99A5B1",
+      },
     },
-    extend: {},
   },
   corePlugins: {
     aspectRatio: true,
