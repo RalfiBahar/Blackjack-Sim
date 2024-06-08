@@ -5,7 +5,7 @@ import { meanNetProfitPerBet } from "./utils";
 const BetAmountFrequencyChart: React.FC<{ data: any }> = ({ data }) => {
   return (
     <div>
-      <h3>Bet Amount Frequencies</h3>
+      <h3 className="text-white">Bet Amount Frequencies</h3>
       <Bar
         data={{
           labels: meanNetProfitPerBet(data).map((data) =>
@@ -25,12 +25,27 @@ const BetAmountFrequencyChart: React.FC<{ data: any }> = ({ data }) => {
               title: {
                 display: true,
                 text: "Bet Amount",
+                color: "white",
+              },
+              ticks: {
+                color: "white",
               },
             },
             y: {
               title: {
                 display: true,
                 text: "Frequency",
+                color: "white",
+              },
+              ticks: {
+                color: "white",
+              },
+            },
+          },
+          plugins: {
+            legend: {
+              labels: {
+                color: "white",
               },
             },
           },

@@ -4,7 +4,7 @@ import { Bar } from "react-chartjs-2";
 const TotalNetProfitDistributionChart: React.FC<{ data: any }> = ({ data }) => {
   return (
     <div>
-      <h3>Distribution of Total Net Profit</h3>
+      <h3 className="text-white">Distribution of Total Net Profit</h3>
       <Bar
         data={{
           labels: data["Total Net Profit"].map((_: number, i: number) =>
@@ -24,12 +24,27 @@ const TotalNetProfitDistributionChart: React.FC<{ data: any }> = ({ data }) => {
               title: {
                 display: true,
                 text: "Total Net Profit",
+                color: "white",
+              },
+              ticks: {
+                color: "white",
               },
             },
             y: {
               title: {
                 display: true,
                 text: "Frequency",
+                color: "white",
+              },
+              ticks: {
+                color: "white",
+              },
+            },
+          },
+          plugins: {
+            legend: {
+              labels: {
+                color: "white",
               },
             },
           },

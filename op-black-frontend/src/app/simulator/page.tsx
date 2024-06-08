@@ -5,11 +5,12 @@ import BlackjackSimulation from "@/components/BlackjackSimulation";
 import SimulationForm from "@/components/SimulationForm";
 import { InitialData, SimulationParams } from "@/components/types";
 import { CustomProgressBar } from "@/components";
+import { Spinner } from "@chakra-ui/react";
 
 const initialData: InitialData = {
   numGames: 1000,
-  initialBankroll: 1000,
-  numSimulations: 10,
+  initialBankroll: 10000,
+  numSimulations: 100,
   results: null,
   aggregate: null,
   totalBankruptcies: 0,
@@ -25,9 +26,11 @@ export default function Simulator() {
   const [percentDoneSimulating, setPercentDoneSimulating] = useState<number>(
     initialData.percentDoneSimulating
   );
+  const [simulating, setSimulating] = useState<boolean>(false);
 
   const handleRunSimulation = async (simulationParams: SimulationParams) => {
     setPercentDoneSimulating(0);
+    setSimulating(true);
 
     try {
       const response = await fetch("/api/runSimulation", {
@@ -97,21 +100,37 @@ export default function Simulator() {
       setResults(combinedResults);
       setAggregate(aggregatedData);
       setPercentDoneSimulating(100);
+      setSimulating(false);
     } catch (error) {
       console.error("Error running simulation:", error);
     }
   };
 
   return (
-    <div className="flex justify-center items-center flex-col min-w-width">
-      <p className="text-xl">BLACssKJACKKKKKK</p>
-      <SimulationForm
-        initialData={initialData}
-        onSubmit={handleRunSimulation}
-      />
-      <div>
-        <CustomProgressBar progress={percentDoneSimulating} />
-      </div>
+    <div className="flex justify-center items-center flex-col min-w-width h-full bg-bg-grey">
+      {percentDoneSimulating !== 100 && (
+        <div className="bg-light-grey justify-center items-center flex flex-col rounded-2xl p-16 shadow-2xl">
+          <p className="text-2xl text-white font-bold">Simulate</p>
+          <SimulationForm
+            initialData={initialData}
+            onSubmit={handleRunSimulation}
+          />
+          {simulating && (
+            <>
+              <Spinner
+                thickness="5px"
+                speed="0.65s"
+                emptyColor="gray.200"
+                color="blue.500"
+                size="xl"
+                m={6}
+              />
+              <span className="text-xl text-white">Simulating...</span>
+            </>
+          )}
+        </div>
+      )}
+
       {results && aggregate && (
         <BlackjackSimulation
           initialData={initialData}

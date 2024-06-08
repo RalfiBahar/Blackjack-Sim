@@ -5,7 +5,7 @@ import { createBins } from "./utils";
 const CurrNetProfitDistributionChart: React.FC<{ data: any }> = ({ data }) => {
   return (
     <div>
-      <h3>Distribution of Current Game Net Profit</h3>
+      <h3 className="text-white">Distribution of Current Game Net Profit</h3>
       <Bar
         data={{
           labels: createBins(data["Current Game Net Profit"], 50).map(
@@ -27,6 +27,10 @@ const CurrNetProfitDistributionChart: React.FC<{ data: any }> = ({ data }) => {
               title: {
                 display: true,
                 text: "Current Game Net Profit",
+                color: "white",
+              },
+              ticks: {
+                color: "white",
               },
             },
 
@@ -34,6 +38,17 @@ const CurrNetProfitDistributionChart: React.FC<{ data: any }> = ({ data }) => {
               title: {
                 display: true,
                 text: "Frequency",
+                color: "white",
+              },
+              ticks: {
+                color: "white",
+              },
+            },
+          },
+          plugins: {
+            legend: {
+              labels: {
+                color: "white",
               },
             },
           },

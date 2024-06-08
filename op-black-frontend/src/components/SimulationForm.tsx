@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { InitialData, SimulationParams } from "./types";
+import { Box, FormControl, FormLabel, Input, Button } from "@chakra-ui/react";
 
 interface SimulationFormProps {
   initialData: InitialData;
@@ -26,39 +27,55 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label>Number of Games to Simulate</label>
-        <input
+    <Box
+      as="form"
+      onSubmit={handleSubmit}
+      p={4}
+      m={4}
+      borderWidth={5}
+      borderRadius="md"
+      boxShadow="md"
+      className="border-white"
+    >
+      <FormControl id="numGames" mb={4}>
+        <FormLabel className="text-white">
+          Number of Games to Simulate
+        </FormLabel>
+        <Input
           type="number"
           value={numGames}
           onChange={(e) => setNumGames(Number(e.target.value))}
           min={1}
           max={1000000}
+          className="text-white"
         />
-      </div>
-      <div>
-        <label>Initial Bankroll</label>
-        <input
+      </FormControl>
+      <FormControl id="initialBankroll" mb={4}>
+        <FormLabel className="text-white">Initial Bankroll</FormLabel>
+        <Input
           type="number"
           value={initialBankroll}
           onChange={(e) => setInitialBankroll(Number(e.target.value))}
           min={1}
+          className="text-white"
           max={1000000}
         />
-      </div>
-      <div>
-        <label>Number of Simulations</label>
-        <input
+      </FormControl>
+      <FormControl id="numSimulations" mb={4}>
+        <FormLabel className="text-white">Number of Simulations</FormLabel>
+        <Input
           type="number"
           value={numSimulations}
           onChange={(e) => setNumSimulations(Number(e.target.value))}
           min={1}
           max={100000}
+          className="text-white"
         />
-      </div>
-      <button type="submit">Run Simulation</button>
-    </form>
+      </FormControl>
+      <Button type="submit" colorScheme="blue" mt={4} className="text-white">
+        Run Simulation
+      </Button>
+    </Box>
   );
 };
 

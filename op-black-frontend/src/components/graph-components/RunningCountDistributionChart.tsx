@@ -27,7 +27,7 @@ const RunningCountDistributionChart: React.FC<{ data: any }> = ({ data }) => {
 
   return (
     <div>
-      <h3>Running Count Distribution</h3>
+      <h3 className="text-white">Running Count Distribution</h3>
       <Bar
         data={{
           labels: sortedKeys,
@@ -45,12 +45,27 @@ const RunningCountDistributionChart: React.FC<{ data: any }> = ({ data }) => {
               title: {
                 display: true,
                 text: "Running Count",
+                color: "white",
+              },
+              ticks: {
+                color: "white",
               },
             },
             y: {
               title: {
                 display: true,
                 text: "Frequency",
+                color: "white",
+              },
+              ticks: {
+                color: "white",
+              },
+            },
+          },
+          plugins: {
+            legend: {
+              labels: {
+                color: "white",
               },
             },
           },

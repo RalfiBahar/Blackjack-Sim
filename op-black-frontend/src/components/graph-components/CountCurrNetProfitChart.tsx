@@ -27,7 +27,7 @@ const CountCurrNetProfitChart: React.FC<{ data: any }> = ({ data }) => {
 
   return (
     <div>
-      <h3>Running Count vs. Current Game Net Profit</h3>
+      <h3 className="text-white">Running Count vs. Current Game Net Profit</h3>
       <Scatter
         data={{
           datasets: [
@@ -45,12 +45,20 @@ const CountCurrNetProfitChart: React.FC<{ data: any }> = ({ data }) => {
               title: {
                 display: true,
                 text: "Running Count",
+                color: "white",
+              },
+              ticks: {
+                color: "white",
               },
             },
             y: {
               title: {
                 display: true,
                 text: "Current Game Net Profit",
+                color: "white",
+              },
+              ticks: {
+                color: "white",
               },
             },
           },
@@ -60,6 +68,9 @@ const CountCurrNetProfitChart: React.FC<{ data: any }> = ({ data }) => {
             },
             legend: {
               display: false, // Optionally disable the legend
+              labels: {
+                color: "white",
+              },
             },
           },
           hover: {

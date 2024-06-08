@@ -4,7 +4,7 @@ import { Line } from "react-chartjs-2";
 const CumulativeNetProfitChart: React.FC<{ data: any }> = ({ data }) => {
   return (
     <div>
-      <h3>Cumulative Total Net Profit Trend</h3>
+      <h3 className="text-white">Cumulative Total Net Profit Trend</h3>
       <Line
         data={{
           labels: data["Total Net Profit"].map((_: number, i: number) =>
@@ -24,6 +24,35 @@ const CumulativeNetProfitChart: React.FC<{ data: any }> = ({ data }) => {
               borderColor: "purple",
             },
           ],
+        }}
+        options={{
+          scales: {
+            x: {
+              title: {
+                display: false,
+                color: "white",
+              },
+              ticks: {
+                color: "white",
+              },
+            },
+            y: {
+              title: {
+                display: false,
+                color: "white",
+              },
+              ticks: {
+                color: "white",
+              },
+            },
+          },
+          plugins: {
+            legend: {
+              labels: {
+                color: "white",
+              },
+            },
+          },
         }}
       />
     </div>

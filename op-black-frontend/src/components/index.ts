@@ -11,3 +11,6 @@ export { default as CurrNetProfitDistributionChart } from "./graph-components/Cu
 export { default as TotalNetProfitDistributionChart } from "./graph-components/TotalNetProfitDistributionChart";
 export { default as GeneralStats } from "./graph-components/GeneralStats";
 export { default as CustomProgressBar } from "./CustomProgressBar";
+export { default as EnlargingCard } from "./EnlargingCard";
+export { default as SimulationForm } from "./SimulationForm";
+export { default as EnlargedCardPortal } from "./EnlargedCardPortal";

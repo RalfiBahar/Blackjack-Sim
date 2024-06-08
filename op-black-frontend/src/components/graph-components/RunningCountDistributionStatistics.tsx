@@ -12,10 +12,12 @@ const RunningCountDistributionStatistics: React.FC<{ data: any }> = ({
 
   return (
     <div>
-      <h3>Running Count Distribution Statistics</h3>
-      <p>Mean: {mean.toFixed(2)}</p>
-      <p>Variance: {variance.toFixed(2)}</p>
-      <p>Standard Deviation: {standardDeviation.toFixed(2)}</p>
+      <h3 className="text-white">Running Count Distribution Statistics</h3>
+      <p className="text-white">Mean: {mean.toFixed(2)}</p>
+      <p className="text-white">Variance: {variance.toFixed(2)}</p>
+      <p className="text-white">
+        Standard Deviation: {standardDeviation.toFixed(2)}
+      </p>
     </div>
   );
 };
