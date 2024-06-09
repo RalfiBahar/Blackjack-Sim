@@ -116,7 +116,7 @@ const BlackjackSimulation: React.FC<BlackjackSimulationProps> = ({
                 onCardClick={() =>
                   handleCardClick(
                     "CurrentBankrollChart",
-                    <CurrentBankrollChart data={results} pointRadius={3} />
+                    <CurrentBankrollChart data={results} pointRadius={0} />
                   )
                 }
                 backgroundColor={themeColors.LIGHT_GREY}

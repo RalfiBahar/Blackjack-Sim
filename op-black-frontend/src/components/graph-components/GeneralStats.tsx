@@ -87,7 +87,6 @@ const GeneralStats: React.FC<{
         <Stat>
           <StatLabel className="text-white">Money earned per hour</StatLabel>
           <StatNumber className="text-white">
-            {" "}
             {(
               results["Expected Value Per Game"][0] * GAMES_PLAYED_PER_HOUR
             ).toFixed(3)}
@@ -125,9 +124,7 @@ const GeneralStats: React.FC<{
             <StatArrow
               ml={2}
               type={
-                results["Final Bankroll"][0] - initialBankroll >= 0
-                  ? "increase"
-                  : "decrease"
+                results["Total Profit Amount"][0] >= 0 ? "increase" : "decrease"
               }
               boxSize={5}
             />
