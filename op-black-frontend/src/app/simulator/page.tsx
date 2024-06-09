@@ -8,9 +8,9 @@ import { CustomProgressBar } from "@/components";
 import { Spinner } from "@chakra-ui/react";
 
 const initialData: InitialData = {
-  numGames: 1000,
+  numGames: 300,
   initialBankroll: 10000,
-  numSimulations: 100,
+  numSimulations: 1000,
   results: null,
   aggregate: null,
   totalBankruptcies: 0,
@@ -27,10 +27,14 @@ export default function Simulator() {
     initialData.percentDoneSimulating
   );
   const [simulating, setSimulating] = useState<boolean>(false);
+  const [numGames, setNumGames] = useState<number>(initialData.numGames);
+  const [numSims, setNumSims] = useState<number>(initialData.numSimulations);
 
   const handleRunSimulation = async (simulationParams: SimulationParams) => {
     setPercentDoneSimulating(0);
     setSimulating(true);
+    setNumGames(simulationParams.numGames);
+    setNumSims(simulationParams.numSimulations);
 
     try {
       const response = await fetch("/api/runSimulation", {
@@ -126,6 +130,11 @@ export default function Simulator() {
                 m={6}
               />
               <span className="text-xl text-white">Simulating...</span>
+              {numGames * numSims > 1000000 && (
+                <span className="text-lg- text-white">
+                  (This might take a while)
+                </span>
+              )}
             </>
           )}
         </div>

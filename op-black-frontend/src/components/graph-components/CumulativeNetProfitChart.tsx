@@ -1,5 +1,6 @@
 import React from "react";
 import { Line } from "react-chartjs-2";
+import { themeColors } from "@/constants";
 
 const CumulativeNetProfitChart: React.FC<{ data: any }> = ({ data }) => {
   return (
@@ -21,7 +22,7 @@ const CumulativeNetProfitChart: React.FC<{ data: any }> = ({ data }) => {
                 },
                 []
               ),
-              borderColor: "purple",
+              borderColor: themeColors.GRAPH_PURPLE,
             },
           ],
         }}
@@ -30,26 +31,26 @@ const CumulativeNetProfitChart: React.FC<{ data: any }> = ({ data }) => {
             x: {
               title: {
                 display: false,
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
               ticks: {
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
             },
             y: {
               title: {
                 display: false,
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
               ticks: {
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
             },
           },
           plugins: {
             legend: {
               labels: {
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
             },
           },

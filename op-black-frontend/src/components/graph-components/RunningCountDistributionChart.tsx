@@ -1,5 +1,6 @@
 import React from "react";
 import { Bar } from "react-chartjs-2";
+import { themeColors } from "@/constants";
 
 const RunningCountDistributionChart: React.FC<{ data: any }> = ({ data }) => {
   // Aggregate Running Count data
@@ -35,7 +36,7 @@ const RunningCountDistributionChart: React.FC<{ data: any }> = ({ data }) => {
             {
               label: "Running Count",
               data: frequencies,
-              backgroundColor: "green",
+              backgroundColor: themeColors.GRAPH_GREEN,
             },
           ],
         }}
@@ -45,27 +46,27 @@ const RunningCountDistributionChart: React.FC<{ data: any }> = ({ data }) => {
               title: {
                 display: true,
                 text: "Running Count",
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
               ticks: {
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
             },
             y: {
               title: {
                 display: true,
                 text: "Frequency",
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
               ticks: {
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
             },
           },
           plugins: {
             legend: {
               labels: {
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
             },
           },

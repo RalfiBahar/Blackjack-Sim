@@ -10,6 +10,9 @@ Chart.defaults.color = "#00000";
 export const metadata: Metadata = {
   title: "Blackjack Simulator",
   description: "Simulate blackjack strategies.",
+  icons: {
+    icon: "/icon.png",
+  },
 };
 
 export default function RootLayout({

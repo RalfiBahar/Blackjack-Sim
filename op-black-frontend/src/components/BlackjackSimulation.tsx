@@ -40,7 +40,7 @@ import {
   SimpleGrid,
   Button,
 } from "@chakra-ui/react";
-import { LIGHT_GREY } from "@/constants";
+import { themeColors } from "@/constants";
 
 ChartJS.register(
   CategoryScale,
@@ -113,7 +113,7 @@ const BlackjackSimulation: React.FC<BlackjackSimulationProps> = ({
                     <CurrentBankrollChart data={results} />
                   )
                 }
-                backgroundColor={LIGHT_GREY}
+                backgroundColor={themeColors.LIGHT_GREY}
               >
                 <CurrentBankrollChart data={results} />
               </EnlargingCard>
@@ -132,7 +132,7 @@ const BlackjackSimulation: React.FC<BlackjackSimulationProps> = ({
                         <TotalNetProfitDistributionChart data={results} />
                       )
                     }
-                    backgroundColor={LIGHT_GREY}
+                    backgroundColor={themeColors.LIGHT_GREY}
                   >
                     <TotalNetProfitDistributionChart data={results} />
                   </EnlargingCard>
@@ -148,7 +148,7 @@ const BlackjackSimulation: React.FC<BlackjackSimulationProps> = ({
                         <CumulativeNetProfitChart data={results} />
                       )
                     }
-                    backgroundColor={LIGHT_GREY}
+                    backgroundColor={themeColors.LIGHT_GREY}
                   >
                     <CumulativeNetProfitChart data={results} />
                   </EnlargingCard>
@@ -165,7 +165,7 @@ const BlackjackSimulation: React.FC<BlackjackSimulationProps> = ({
                         <CurrNetProfitPerBetChart data={aggregate} />
                       )
                     }
-                    backgroundColor={LIGHT_GREY}
+                    backgroundColor={themeColors.LIGHT_GREY}
                   >
                     <CurrNetProfitPerBetChart data={aggregate} />
                   </EnlargingCard>
@@ -182,7 +182,7 @@ const BlackjackSimulation: React.FC<BlackjackSimulationProps> = ({
                         <BetAmountFrequencyChart data={aggregate} />
                       )
                     }
-                    backgroundColor={LIGHT_GREY}
+                    backgroundColor={themeColors.LIGHT_GREY}
                   >
                     <BetAmountFrequencyChart data={aggregate} />
                   </EnlargingCard>
@@ -207,7 +207,7 @@ const BlackjackSimulation: React.FC<BlackjackSimulationProps> = ({
                     <CountCurrNetProfitChart data={aggregate} />
                   )
                 }
-                backgroundColor={LIGHT_GREY}
+                backgroundColor={themeColors.LIGHT_GREY}
                 className="justify-center flex h-full"
               >
                 <CountCurrNetProfitChart data={aggregate} />
@@ -225,7 +225,7 @@ const BlackjackSimulation: React.FC<BlackjackSimulationProps> = ({
                     <CurrNetProfitDistributionChart data={results} />
                   )
                 }
-                backgroundColor={LIGHT_GREY}
+                backgroundColor={themeColors.LIGHT_GREY}
                 className="justify-center flex h-full"
               >
                 <CurrNetProfitDistributionChart data={results} />
@@ -242,7 +242,7 @@ const BlackjackSimulation: React.FC<BlackjackSimulationProps> = ({
                     <RunningCountDistributionChart data={aggregate} />
                   )
                 }
-                backgroundColor={LIGHT_GREY}
+                backgroundColor={themeColors.LIGHT_GREY}
               >
                 <RunningCountDistributionChart data={aggregate} />
                 <RunningCountDistributionStatistics data={aggregate} />

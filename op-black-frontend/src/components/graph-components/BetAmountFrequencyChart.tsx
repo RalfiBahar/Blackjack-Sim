@@ -1,6 +1,7 @@
 import React from "react";
 import { Bar } from "react-chartjs-2";
 import { meanNetProfitPerBet } from "./utils";
+import { themeColors } from "@/constants";
 
 const BetAmountFrequencyChart: React.FC<{ data: any }> = ({ data }) => {
   return (
@@ -15,7 +16,7 @@ const BetAmountFrequencyChart: React.FC<{ data: any }> = ({ data }) => {
             {
               label: "Frequency",
               data: meanNetProfitPerBet(data).map((data) => data.frequency),
-              backgroundColor: "orange",
+              backgroundColor: themeColors.GRAPH_ORANGE,
             },
           ],
         }}
@@ -25,27 +26,27 @@ const BetAmountFrequencyChart: React.FC<{ data: any }> = ({ data }) => {
               title: {
                 display: true,
                 text: "Bet Amount",
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
               ticks: {
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
             },
             y: {
               title: {
                 display: true,
                 text: "Frequency",
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
               ticks: {
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
             },
           },
           plugins: {
             legend: {
               labels: {
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
             },
           },

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Scatter } from "react-chartjs-2";
 import { downsample } from "./utils";
+import { themeColors } from "@/constants";
 
 const CountCurrNetProfitChart: React.FC<{ data: any }> = ({ data }) => {
   const [processedData, setProcessedData] = useState<any>(null);
@@ -36,6 +37,7 @@ const CountCurrNetProfitChart: React.FC<{ data: any }> = ({ data }) => {
               data: processedData,
               backgroundColor: "rgba(0, 100, 0, 0.2)", // Adjust transparency
               pointRadius: 5, // Increase the size of the points
+              pointBackgroundColor: themeColors.GRAPH_GREEN,
             },
           ],
         }}
@@ -45,20 +47,20 @@ const CountCurrNetProfitChart: React.FC<{ data: any }> = ({ data }) => {
               title: {
                 display: true,
                 text: "Running Count",
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
               ticks: {
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
             },
             y: {
               title: {
                 display: true,
                 text: "Current Game Net Profit",
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
               ticks: {
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
             },
           },
@@ -69,7 +71,7 @@ const CountCurrNetProfitChart: React.FC<{ data: any }> = ({ data }) => {
             legend: {
               display: false, // Optionally disable the legend
               labels: {
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
             },
           },

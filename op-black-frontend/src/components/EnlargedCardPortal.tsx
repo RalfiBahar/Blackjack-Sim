@@ -2,7 +2,7 @@ import React, { ReactNode } from "react";
 import ReactDOM from "react-dom";
 import { Box, Card, CardProps, IconButton } from "@chakra-ui/react";
 import { CloseIcon } from "@chakra-ui/icons";
-import { LIGHT_GREY } from "@/constants";
+import { themeColors } from "@/constants";
 
 interface EnlargedCardPortalProps extends CardProps {
   children: ReactNode;
@@ -30,7 +30,7 @@ const EnlargedCardPortal: React.FC<EnlargedCardPortalProps> = ({
     >
       <Card
         {...props}
-        backgroundColor={LIGHT_GREY}
+        backgroundColor={themeColors.LIGHT_GREY}
         p={5}
         onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the card
         width="80%"

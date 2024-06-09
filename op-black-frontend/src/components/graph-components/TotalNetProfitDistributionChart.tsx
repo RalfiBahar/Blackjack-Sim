@@ -1,5 +1,6 @@
 import React from "react";
 import { Bar } from "react-chartjs-2";
+import { themeColors } from "@/constants";
 
 const TotalNetProfitDistributionChart: React.FC<{ data: any }> = ({ data }) => {
   return (
@@ -14,7 +15,7 @@ const TotalNetProfitDistributionChart: React.FC<{ data: any }> = ({ data }) => {
             {
               label: "Total Net Profit",
               data: data["Total Net Profit"],
-              backgroundColor: "blue",
+              backgroundColor: themeColors.GRAPH_BLUE,
             },
           ],
         }}
@@ -24,27 +25,27 @@ const TotalNetProfitDistributionChart: React.FC<{ data: any }> = ({ data }) => {
               title: {
                 display: true,
                 text: "Total Net Profit",
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
               ticks: {
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
             },
             y: {
               title: {
                 display: true,
                 text: "Frequency",
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
               ticks: {
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
             },
           },
           plugins: {
             legend: {
               labels: {
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
             },
           },

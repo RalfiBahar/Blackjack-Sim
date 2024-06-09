@@ -1,6 +1,7 @@
 import React from "react";
 import { Bar } from "react-chartjs-2";
 import { createBins } from "./utils";
+import { themeColors } from "@/constants";
 
 const CurrNetProfitDistributionChart: React.FC<{ data: any }> = ({ data }) => {
   return (
@@ -17,7 +18,7 @@ const CurrNetProfitDistributionChart: React.FC<{ data: any }> = ({ data }) => {
               data: createBins(data["Current Game Net Profit"], 50).map(
                 (bin: { count: any }) => bin.count
               ),
-              backgroundColor: "green",
+              backgroundColor: themeColors.GRAPH_GREEN,
             },
           ],
         }}
@@ -27,10 +28,10 @@ const CurrNetProfitDistributionChart: React.FC<{ data: any }> = ({ data }) => {
               title: {
                 display: true,
                 text: "Current Game Net Profit",
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
               ticks: {
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
             },
 
@@ -38,17 +39,17 @@ const CurrNetProfitDistributionChart: React.FC<{ data: any }> = ({ data }) => {
               title: {
                 display: true,
                 text: "Frequency",
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
               ticks: {
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
             },
           },
           plugins: {
             legend: {
               labels: {
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
             },
           },

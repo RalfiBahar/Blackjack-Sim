@@ -9,7 +9,7 @@ const CustomProgressBar: React.FC<{ progress: number }> = ({ progress }) => {
     borderRadius: "inherit",
     textAlign: "center" as "center",
     lineHeight: "30px",
-    color: "white",
+    color: themeColors.GRAPH_TEXT,
   };
 
   return (

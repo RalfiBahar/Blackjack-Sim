@@ -8,6 +8,7 @@ import {
   StatArrow,
   StatGroup,
 } from "@chakra-ui/react";
+import { themeColors } from "@/constants";
 
 const GeneralStats: React.FC<{
   results: any;

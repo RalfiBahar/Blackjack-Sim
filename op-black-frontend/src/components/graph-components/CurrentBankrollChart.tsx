@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Line } from "react-chartjs-2";
+import { themeColors } from "@/constants";
 
 const CurrentBankrollChart: React.FC<{ data: any }> = ({ data }) => {
   return (
@@ -16,7 +17,7 @@ const CurrentBankrollChart: React.FC<{ data: any }> = ({ data }) => {
             {
               label: "Current Bankroll",
               data: data["Current Bankroll"],
-              borderColor: "red",
+              borderColor: themeColors.GRAPH_RED,
               fill: false,
             },
           ],
@@ -27,27 +28,27 @@ const CurrentBankrollChart: React.FC<{ data: any }> = ({ data }) => {
               title: {
                 display: true,
                 text: "Game Number",
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
               ticks: {
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
             },
             y: {
               title: {
                 display: true,
                 text: "Current Bankroll",
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
               ticks: {
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
             },
           },
           plugins: {
             legend: {
               labels: {
-                color: "white",
+                color: themeColors.GRAPH_TEXT,
               },
             },
           },
