@@ -110,12 +110,12 @@ const BlackjackSimulation: React.FC<BlackjackSimulationProps> = ({
                 onCardClick={() =>
                   handleCardClick(
                     "CurrentBankrollChart",
-                    <CurrentBankrollChart data={results} />
+                    <CurrentBankrollChart data={results} pointRadius={3} />
                   )
                 }
                 backgroundColor={themeColors.LIGHT_GREY}
               >
-                <CurrentBankrollChart data={results} />
+                <CurrentBankrollChart data={results} pointRadius={0} />
               </EnlargingCard>
             </GridItem>
 

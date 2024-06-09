@@ -4,7 +4,10 @@ import React from "react";
 import { Line } from "react-chartjs-2";
 import { themeColors } from "@/constants";
 
-const CurrentBankrollChart: React.FC<{ data: any }> = ({ data }) => {
+const CurrentBankrollChart: React.FC<{ data: any; pointRadius: number }> = ({
+  data,
+  pointRadius = 3,
+}) => {
   return (
     <div>
       <h3 className="text-white">Current Bankroll per Game</h3>
@@ -19,6 +22,7 @@ const CurrentBankrollChart: React.FC<{ data: any }> = ({ data }) => {
               data: data["Current Bankroll"],
               borderColor: themeColors.GRAPH_RED,
               fill: false,
+              pointRadius,
             },
           ],
         }}
