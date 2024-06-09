@@ -20,10 +20,12 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
   const [numSimulations, setNumSimulations] = useState<number>(
     initialData.numSimulations
   );
+  const [disabled, setDisabled] = useState<boolean>(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit({ numGames, initialBankroll, numSimulations });
+    setDisabled(true);
   };
 
   return (
@@ -72,7 +74,13 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
           className="text-white"
         />
       </FormControl>
-      <Button type="submit" colorScheme="blue" mt={4} className="text-white">
+      <Button
+        type="submit"
+        colorScheme="blue"
+        mt={4}
+        className="text-white"
+        isDisabled={disabled}
+      >
         Run Simulation
       </Button>
     </Box>

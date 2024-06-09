@@ -4,11 +4,10 @@
 
 :root,
 html {
-  overflow: hidden;
   height: 100%;
+  background-color: #272b34;
 }
 
 body {
   height: 100%;
-  overflow: auto;
 }

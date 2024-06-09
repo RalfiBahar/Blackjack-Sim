@@ -86,7 +86,13 @@ const BlackjackSimulation: React.FC<BlackjackSimulationProps> = ({
         <h1 className="text-white font-bold text-4xl">
           Blackjack Simulation Results
         </h1>
-        <Button size="lg" onClick={() => window.location.reload()}>
+        <Button
+          size="lg"
+          onClick={() => window.location.reload()}
+          sx={{
+            fontSize: ["10px", "16px", "18px"],
+          }}
+        >
           Run new simulation
         </Button>
       </div>
