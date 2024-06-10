@@ -14,3 +14,5 @@ export { default as CustomProgressBar } from "./CustomProgressBar";
 export { default as EnlargingCard } from "./EnlargingCard";
 export { default as SimulationForm } from "./SimulationForm";
 export { default as EnlargedCardPortal } from "./EnlargedCardPortal";
+export { default as InfoCard } from "./InfoCard";
+export { default as BettingSpreadTable } from "./BettingSpreadTable";

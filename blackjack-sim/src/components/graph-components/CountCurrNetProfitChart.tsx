@@ -1,5 +1,4 @@
-// src/components/CountCurrNetProfitChart.tsx
-
+"use client";
 import React, { useEffect, useState } from "react";
 import { Scatter } from "react-chartjs-2";
 import { downsample } from "./utils";

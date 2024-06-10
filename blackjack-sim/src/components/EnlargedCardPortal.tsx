@@ -1,5 +1,6 @@
+"use client";
+
 import React, { ReactNode } from "react";
-import ReactDOM from "react-dom";
 import { Box, Card, CardProps, IconButton } from "@chakra-ui/react";
 import { CloseIcon } from "@chakra-ui/icons";
 import { themeColors } from "@/constants";
