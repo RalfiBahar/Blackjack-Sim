@@ -5,12 +5,14 @@ import { InfoCard } from "@/components";
 
 export default function Home() {
   return (
-    <div className="flex justify-center items-center flex-col w-full h-full bg-bg-grey">
-      <h1 className="text-6xl text-white">Welcome to BlackjackSim!</h1>
-      <h3 className="mb-10 mt-3 text-white text-2xl italic">
+    <div className="flex items-center flex-col w-full h-full bg-bg-grey">
+      <h1 className="text-6xl text-white mt-20 text-center">
+        Welcome to BlackjackSim!
+      </h1>
+      <h3 className="mb-10 mt-3 text-white text-2xl italic text-center">
         Simulate and optimize your blackjack strategies.
       </h3>
-      <div className="flex flex-row w-full justify-center">
+      <div className="flex md:flex-row flex-col w-full justify-center items-center md:items-start">
         <div className="size-96 aspect-w-1 aspect-h-1 bg-light-grey justify-center items-center flex flex-col rounded-2xl p-3 shadow-2xl">
           <div className="h-1/2 w-1/2 relative">
             <Image

@@ -24,7 +24,7 @@ const BettingSpreadTable: React.FC<BettinSpreadTableProps> = ({ ...props }) => {
         maxWidth="800px"
         margin="0 auto"
       >
-        <Table variant="simple">
+        <Table variant="simple" size={"sm"}>
           <TableCaption>Betting Strategy Based on Running Count</TableCaption>
           <Thead>
             <Tr>
