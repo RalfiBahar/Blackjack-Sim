@@ -4,8 +4,10 @@ import { BET_MULTIPLIER } from "../../../constants";
 
 export async function POST(req: NextRequest) {
   try {
-    const { numGames, initialBankroll, numSimulations } = await req.json();
+    const { numGames, initialBankroll, numSimulations, bettingSpread } =
+      await req.json();
 
+    //console.log("bs: ", bettingSpread);
     const baseBet = initialBankroll * BET_MULTIPLIER;
     const aggregatedData: any[] = [];
     let totalBankruptcies = 0;
@@ -14,7 +16,12 @@ export async function POST(req: NextRequest) {
     const stream = new ReadableStream({
       async start(controller) {
         for (let i = 0; i < numSimulations; i++) {
-          const result = runSimulation(numGames, baseBet, initialBankroll);
+          const result = runSimulation(
+            numGames,
+            baseBet,
+            initialBankroll,
+            bettingSpread
+          );
           totalBankruptcies += result.summary.numBankruptcies;
           aggregatedData.push(result.data);
 

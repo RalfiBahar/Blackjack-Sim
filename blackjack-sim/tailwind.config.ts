@@ -12,6 +12,7 @@ const config: Config = {
         "bg-grey": "#272B34",
         "light-grey": "#2F333E", //"#99A5B1",
         "dark-blue": "#0C1222",
+        "lighter-blue": "#3396ff",
       },
     },
   },

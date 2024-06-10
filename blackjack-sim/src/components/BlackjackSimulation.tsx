@@ -98,7 +98,7 @@ const BlackjackSimulation: React.FC<BlackjackSimulationProps> = ({
       </div>
 
       {results && aggregate && (
-        <div className="bg-bg-grey">
+        <div className="bg-bg-grey m-5 justify-center md:justify-normal">
           <GeneralStats
             results={results}
             totalBankruptcies={totalBankruptcies}
@@ -109,7 +109,7 @@ const BlackjackSimulation: React.FC<BlackjackSimulationProps> = ({
           <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={4} m={5}>
             <GridItem>
               <EnlargingCard
-                p={12}
+                p={5}
                 height="100%"
                 cardId={"CurrentBankrollChart"}
                 enlargedCard={enlargedCard}

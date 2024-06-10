@@ -24,7 +24,7 @@ const GeneralStats: React.FC<{
   initialBankroll,
 }) => {
   return (
-    <div className="bg-light-grey rounded-xl p-3 m-5">
+    <div className="bg-light-grey rounded-xl p-3 m-0 md:m-5">
       <StatGroup>
         <Stat>
           <StatLabel className="text-white">Player win rate</StatLabel>

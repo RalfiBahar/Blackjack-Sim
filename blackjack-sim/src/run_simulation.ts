@@ -26,10 +26,15 @@ interface SimulationResult {
   };
 }
 
+interface BettingSpread {
+  [key: string]: number;
+}
+
 function runSimulation(
   numGames: number,
   baseBet: number,
-  initialBankroll: number
+  initialBankroll: number,
+  bettingSpread: BettingSpread
 ): SimulationResult {
   const results: Results = {
     player_blackjack: 0,
@@ -91,26 +96,48 @@ function runSimulation(
     const game = new BlackjackGame(deck, runningCount);
 
     let betAmount = baseBet;
-    if (runningCount <= -1) {
-      betAmount = baseBet;
-    } else if (runningCount == 0 || runningCount == 1) {
-      betAmount = baseBet;
-    } else if (runningCount == 2) {
-      betAmount = baseBet * 4;
-    } else if (runningCount == 3) {
-      betAmount = baseBet * 6;
-    } else if (runningCount == 4) {
-      betAmount = baseBet * 8;
-    } else if (runningCount == 5) {
-      betAmount = baseBet * 12;
-    } else if (runningCount >= 6 && runningCount <= 9) {
-      betAmount = baseBet * 16;
-    } else if (runningCount >= 10) {
-      betAmount = baseBet * 32;
+    if (bettingSpread) {
+      for (const count in bettingSpread) {
+        let betMultiplier = 1;
+        if (runningCount < 0 && count === "-1") {
+          betMultiplier = bettingSpread["-1"];
+        } else if (count.includes("-")) {
+          const [min, max] = count.split("-").map(Number);
+          if (runningCount >= min && runningCount <= max) {
+            betMultiplier = bettingSpread[count];
+          }
+        } else {
+          const singleValue = Number(count);
+          if (runningCount === singleValue) {
+            betMultiplier = bettingSpread[count];
+          }
+        }
+        if (betMultiplier !== 1) {
+          betAmount = baseBet * betMultiplier;
+          break;
+        }
+      }
     } else {
-      betAmount = baseBet;
+      if (runningCount <= -1) {
+        betAmount = baseBet;
+      } else if (runningCount == 0 || runningCount == 1) {
+        betAmount = baseBet;
+      } else if (runningCount == 2) {
+        betAmount = baseBet * 4;
+      } else if (runningCount == 3) {
+        betAmount = baseBet * 6;
+      } else if (runningCount == 4) {
+        betAmount = baseBet * 8;
+      } else if (runningCount == 5) {
+        betAmount = baseBet * 12;
+      } else if (runningCount >= 6 && runningCount <= 9) {
+        betAmount = baseBet * 16;
+      } else if (runningCount >= 10) {
+        betAmount = baseBet * 32;
+      } else {
+        betAmount = baseBet;
+      }
     }
-
     if (bankroll < betAmount) {
       numBankruptcies += 1;
       break;

@@ -6,6 +6,8 @@ import SimulationForm from "@/components/SimulationForm";
 import { InitialData, SimulationParams } from "@/components/types";
 import { CustomProgressBar } from "@/components";
 import { Spinner } from "@chakra-ui/react";
+import { AdvancedSettingsAccordion } from "@/components";
+import { InitialBettingValues } from "@/constants";
 
 const initialData: InitialData = {
   numGames: 300,
@@ -15,6 +17,7 @@ const initialData: InitialData = {
   aggregate: null,
   totalBankruptcies: 0,
   percentDoneSimulating: 0,
+  bettingSpread: InitialBettingValues,
 };
 
 export default function Simulator() {
@@ -111,9 +114,9 @@ export default function Simulator() {
   };
 
   return (
-    <div className="flex justify-center items-center flex-col min-w-width h-full bg-bg-grey">
+    <div className="flex items-center flex-col min-w-width h-full bg-bg-grey">
       {percentDoneSimulating !== 100 && (
-        <div className="bg-light-grey justify-center items-center flex flex-col rounded-2xl p-16 shadow-2xl">
+        <div className="bg-light-grey justify-center items-center flex flex-col rounded-2xl p-16 shadow-2xl w-4/5 md:w-1/2 mt-20">
           <p className="text-2xl text-white font-bold">Simulate</p>
           <SimulationForm
             initialData={initialData}

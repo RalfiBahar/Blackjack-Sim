@@ -10,3 +10,15 @@ export const themeColors = {
   GRAPH_PURPLE: "purple",
   GRAPH_ORANGE: "orange",
 };
+
+export const InitialBettingValues = {
+  "-1": 1,
+  "0": 1,
+  "1": 1,
+  "2": 4,
+  "3": 6,
+  "4": 8,
+  "5": 12,
+  "6-9": 16,
+  "10": 32,
+};

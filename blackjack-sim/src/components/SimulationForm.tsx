@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import { InitialData, SimulationParams } from "./types";
+import { BettingValues, InitialData, SimulationParams } from "./types";
 import { Box, FormControl, FormLabel, Input, Button } from "@chakra-ui/react";
+import { AdvancedSettingsAccordion } from ".";
+import { InitialBettingValues } from "@/constants";
 
 interface SimulationFormProps {
   initialData: InitialData;
@@ -21,10 +23,13 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
     initialData.numSimulations
   );
   const [disabled, setDisabled] = useState<boolean>(false);
+  const [isAccordionOpen, setIsAccordionOpen] = useState<boolean>(false);
+  const [bettingSpread, setBettingValues] =
+    useState<BettingValues>(InitialBettingValues);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ numGames, initialBankroll, numSimulations });
+    onSubmit({ numGames, initialBankroll, numSimulations, bettingSpread });
     setDisabled(true);
   };
 
@@ -37,7 +42,7 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
       borderWidth={5}
       borderRadius="md"
       boxShadow="md"
-      className="border-white"
+      className={`border-white transition-all duration-300 w-full`}
     >
       <FormControl id="numGames" mb={4}>
         <FormLabel className="text-white">
@@ -83,6 +88,12 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
       >
         Run Simulation
       </Button>
+      <div className="hidden md:block">
+        <AdvancedSettingsAccordion
+          onToggle={setIsAccordionOpen}
+          sendBettingValues={setBettingValues}
+        />
+      </div>
     </Box>
   );
 };

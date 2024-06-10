@@ -16,3 +16,5 @@ export { default as SimulationForm } from "./SimulationForm";
 export { default as EnlargedCardPortal } from "./EnlargedCardPortal";
 export { default as InfoCard } from "./InfoCard";
 export { default as BettingSpreadTable } from "./BettingSpreadTable";
+export { default as AdvancedSettingsAccordion } from "./AdvancedSettingsAccordion";
+export { default as EditibleBettingSpreadTable } from "./EditibleBettingSpreadTable";
