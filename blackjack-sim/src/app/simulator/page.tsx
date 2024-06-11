@@ -5,9 +5,22 @@ import BlackjackSimulation from "@/components/BlackjackSimulation";
 import SimulationForm from "@/components/SimulationForm";
 import { InitialData, SimulationParams } from "@/components/types";
 import { CustomProgressBar } from "@/components";
-import { Spinner } from "@chakra-ui/react";
+import {
+  Spinner,
+  IconButton,
+  Modal,
+  ModalOverlay,
+  ModalBody,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalFooter,
+  Button,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { AdvancedSettingsAccordion } from "@/components";
 import { InitialBettingValues } from "@/constants";
+import { InfoIcon } from "@chakra-ui/icons";
 
 const initialData: InitialData = {
   numGames: 300,
@@ -113,11 +126,21 @@ export default function Simulator() {
     }
   };
 
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
     <div className="flex items-center flex-col min-w-width h-full bg-bg-grey">
       {percentDoneSimulating !== 100 && (
-        <div className="bg-light-grey justify-center items-center flex flex-col rounded-2xl p-16 shadow-2xl w-4/5 md:w-1/2 mt-20">
-          <p className="text-2xl text-white font-bold">Simulate</p>
+        <div className="bg-light-grey justify-center flex flex-col rounded-2xl p-16 shadow-2xl w-4/5 md:w-1/2 mt-20">
+          <div className="flex justify-end">
+            <IconButton
+              aria-label="info"
+              icon={<InfoIcon />}
+              onClick={onOpen}
+            />{" "}
+          </div>
+
+          <p className="text-2xl text-white font-bold text-center">Simulate</p>
           <SimulationForm
             initialData={initialData}
             onSubmit={handleRunSimulation}
@@ -151,6 +174,22 @@ export default function Simulator() {
           totalBankruptcies={totalBankruptcies}
         />
       )}
+      <Modal onClose={onClose} size="md" isOpen={isOpen}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Rules</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ut eum
+            dolores non. A commodi natus impedit, temporibus at explicabo?
+            Possimus nisi officiis consectetur, architecto perspiciatis
+            similique odit delectus quas recusandae.
+          </ModalBody>
+          <ModalFooter>
+            <Button onClick={onClose}>Close</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </div>
   );
 }
