@@ -146,7 +146,7 @@ export default function Simulator() {
             onSubmit={handleRunSimulation}
           />
           {simulating && (
-            <>
+            <div className="flex flex-col justify-center items-center">
               <Spinner
                 thickness="5px"
                 speed="0.65s"
@@ -161,7 +161,7 @@ export default function Simulator() {
                   (This might take a while)
                 </span>
               )}
-            </>
+            </div>
           )}
         </div>
       )}
@@ -180,6 +180,7 @@ export default function Simulator() {
           <ModalHeader>Rules</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
+            {/* TODO: Write rules*/}
             Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ut eum
             dolores non. A commodi natus impedit, temporibus at explicabo?
             Possimus nisi officiis consectetur, architecto perspiciatis
