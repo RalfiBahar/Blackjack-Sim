@@ -181,10 +181,43 @@ export default function Simulator() {
           <ModalCloseButton />
           <ModalBody>
             {/* TODO: Write rules*/}
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ut eum
-            dolores non. A commodi natus impedit, temporibus at explicabo?
-            Possimus nisi officiis consectetur, architecto perspiciatis
-            similique odit delectus quas recusandae.
+            - Player plays based on basic strategy.
+            <br />
+            - Dealer stands on soft 17.
+            <br />
+            - 1 Hour of gameplay equates to 200 games.
+            <br />
+            - Blackjack pays 3:2.
+            <br />
+            - Player can double down on any two cards.
+            <br />
+            - Player can split pairs.
+            <br />
+            - No re-splitting of aces.
+            <br />
+            - Dealer peeks for blackjack on ace or ten.
+            <br />
+            - Insurance is offered when the dealer shows an ace.
+            <br />
+            - Surrender is not allowed.
+            <br />
+            - If the player busts, the dealer wins regardless of the dealer's
+            hand.
+            <br />
+            - Running count is reset when there are 15 or fewer cards in the
+            deck.
+            <br />
+            - Base bet is 0.1% of initial bankroll.
+            <br />
+            - Betting amount is adjusted based on the running count.
+            <br />
+            - Bankroll management: If bankroll is less than the bet amount, the
+            simulation ends.
+            <br />
+            - Bankroll is tracked over time to observe performance trends.
+            <br />
+            - The simulation tracks the number of bankruptcies.
+            <br />
           </ModalBody>
           <ModalFooter>
             <Button onClick={onClose}>Close</Button>
