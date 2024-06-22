@@ -6,7 +6,7 @@ import { InfoCard } from "@/components";
 export default function Home() {
   return (
     <div className="flex items-center flex-col w-full h-full bg-bg-grey">
-      <h1 className="text-6xl text-white mt-20 text-center">
+      <h1 className="text-6xl text-white mt-20 text-center font-bold">
         Welcome to BlackjackSim!
       </h1>
       <h3 className="mb-10 mt-3 text-white text-2xl italic text-center">

@@ -1,14 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Scatter } from "react-chartjs-2";
-import { downsample } from "./utils";
+import { downsample, removeDuplicates } from "./utils";
 import { themeColors } from "@/constants";
 
 const CountCurrNetProfitChart: React.FC<{ data: any }> = ({ data }) => {
   const [processedData, setProcessedData] = useState<any>(null);
 
   useEffect(() => {
-    // Convert your data to scatter plot format
     const scatterData = data.flatMap((data: any) =>
       data["Running Count"].map((count: number, i: number) => ({
         x: count,
@@ -16,8 +15,7 @@ const CountCurrNetProfitChart: React.FC<{ data: any }> = ({ data }) => {
       }))
     );
 
-    // Downsample the data
-    const downsampledData = downsample(scatterData, 2000); // Adjust threshold as needed
+    const downsampledData = removeDuplicates(scatterData);
     setProcessedData(downsampledData);
   }, [data]);
 

@@ -129,3 +129,16 @@ export function downsample(data: any[], threshold: number): any[] {
 
   return sampled;
 }
+
+export function removeDuplicates(data: any) {
+  const unique: any = [];
+  const seen = new Set();
+  data.forEach((point: any) => {
+    const key = `${point.x}-${point.y}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      unique.push(point);
+    }
+  });
+  return unique;
+}
