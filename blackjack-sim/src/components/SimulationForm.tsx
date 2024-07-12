@@ -37,9 +37,9 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (numGames * numSimulations > 10000000) {
+    if (numGames * numSimulations > 3000000) {
       setWarning(
-        "The product of numGames and numSimulations must not exceed 10,000,000."
+        "The product of numGames and numSimulations must not exceed 3,000,000."
       );
       return;
     }
