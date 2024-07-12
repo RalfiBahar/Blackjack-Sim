@@ -12,7 +12,7 @@ const InfoCard: React.FC<InfoCardProps> = ({ ...props }) => {
       backgroundColor={themeColors.LIGHT_GREY}
       className="p-5 ml-5 mt-10 w-4/5 md:w-2/5 md:mt-0"
     >
-      <h2 className="text-xl text-white font-bold">What's going on?</h2>
+      <h2 className="text-xl text-white font-bold">What&#39;s going on?</h2>
       <p className="text-base text-white mt-2">
         This is a blackjack simulator. It makes use of optimal/basic strategy
         and card counting to play the game. The simulator does this A LOT of

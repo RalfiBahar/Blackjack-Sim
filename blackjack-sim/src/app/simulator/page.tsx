@@ -211,8 +211,8 @@ export default function Simulator() {
             <br />
             - Surrender is not allowed.
             <br />
-            - If the player busts, the dealer wins regardless of the dealer's
-            hand.
+            - If the player busts, the dealer wins regardless of the
+            dealer&#39;s hand.
             <br />
             - Running count is reset when there are 15 or fewer cards in the
             deck.
