@@ -1,5 +1,6 @@
 // src/components/CustomProgressBar.tsx
 import React from "react";
+import { themeColors } from "@/constants";
 
 const CustomProgressBar: React.FC<{ progress: number }> = ({ progress }) => {
   const progressStyle = {
