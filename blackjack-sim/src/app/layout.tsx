@@ -4,6 +4,9 @@ import "./globals.css";
 import { Providers } from "./providers";
 import "../chartDeafults";
 import { Chart } from "chart.js";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+
 const inter = Inter({ subsets: ["latin"] });
 Chart.defaults.color = "#00000";
 
@@ -69,6 +72,8 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <Providers>{children}</Providers>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
