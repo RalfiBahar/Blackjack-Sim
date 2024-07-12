@@ -18,3 +18,4 @@ export { default as InfoCard } from "./InfoCard";
 export { default as BettingSpreadTable } from "./BettingSpreadTable";
 export { default as AdvancedSettingsAccordion } from "./AdvancedSettingsAccordion";
 export { default as EditibleBettingSpreadTable } from "./EditibleBettingSpreadTable";
+export { default as SocialMediaIcons } from "./SocialMediaIcons";

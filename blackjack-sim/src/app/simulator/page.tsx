@@ -18,7 +18,7 @@ import {
   Button,
   useDisclosure,
 } from "@chakra-ui/react";
-import { AdvancedSettingsAccordion } from "@/components";
+import { SocialMediaIcons } from "@/components";
 import { InitialBettingValues } from "@/constants";
 import { InfoIcon } from "@chakra-ui/icons";
 
@@ -145,6 +145,15 @@ export default function Simulator() {
             initialData={initialData}
             onSubmit={handleRunSimulation}
           />
+          <SocialMediaIcons
+            position={{ base: "static", md: "absolute" }}
+            left={{ base: "auto", md: 2 }}
+            top={{ base: "auto", md: "50%" }}
+            transform={{ base: "none", md: "translateY(-50%)" }}
+            mt={{ base: 4, md: 0 }}
+            mb={{ base: 4, md: 0 }}
+            showFeedback={true}
+          />
           {simulating && (
             <div className="flex flex-col justify-center items-center">
               <Spinner
@@ -165,7 +174,6 @@ export default function Simulator() {
           )}
         </div>
       )}
-
       {results && aggregate && (
         <BlackjackSimulation
           initialData={initialData}
@@ -182,6 +190,8 @@ export default function Simulator() {
           <ModalBody>
             {/* TODO: Write rules*/}
             - Player plays based on basic strategy.
+            <br />
+            - Player uses Hi-Lo method.
             <br />
             - Dealer stands on soft 17.
             <br />

@@ -2,7 +2,14 @@
 
 import React, { useState } from "react";
 import { BettingValues, InitialData, SimulationParams } from "./types";
-import { Box, FormControl, FormLabel, Input, Button } from "@chakra-ui/react";
+import {
+  Box,
+  FormControl,
+  FormLabel,
+  Input,
+  Button,
+  Text,
+} from "@chakra-ui/react";
 import { AdvancedSettingsAccordion } from ".";
 import { InitialBettingValues } from "@/constants";
 
@@ -26,9 +33,17 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
   const [isAccordionOpen, setIsAccordionOpen] = useState<boolean>(false);
   const [bettingSpread, setBettingValues] =
     useState<BettingValues>(InitialBettingValues);
+  const [warning, setWarning] = useState<string>("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (numGames * numSimulations > 10000000) {
+      setWarning(
+        "The product of numGames and numSimulations must not exceed 10,000,000."
+      );
+      return;
+    }
+    setWarning("");
     onSubmit({ numGames, initialBankroll, numSimulations, bettingSpread });
     setDisabled(true);
   };
@@ -79,6 +94,11 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
           className="text-white"
         />
       </FormControl>
+      {warning && (
+        <Text color="red.500" mb={4}>
+          {warning}
+        </Text>
+      )}
       <Button
         type="submit"
         colorScheme="blue"

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@chakra-ui/react";
-import { InfoCard } from "@/components";
+import { InfoCard, SocialMediaIcons } from "@/components";
 
 export default function Home() {
   return (
@@ -13,6 +13,15 @@ export default function Home() {
         Simulate and optimize your blackjack strategies.
       </h3>
       <div className="flex md:flex-row flex-col w-full justify-center items-center md:items-start">
+        <SocialMediaIcons
+          position={{ base: "static", md: "absolute" }}
+          left={{ base: "auto", md: 2 }}
+          top={{ base: "auto", md: "50%" }}
+          transform={{ base: "none", md: "translateY(-50%)" }}
+          mt={{ base: 4, md: 0 }}
+          mb={{ base: 4, md: 0 }}
+          showFeedback={true}
+        />
         <div className="size-96 aspect-w-1 aspect-h-1 bg-light-grey justify-center items-center flex flex-col rounded-2xl p-3 shadow-2xl">
           <div className="h-1/2 w-1/2 relative">
             <Image
