@@ -7,6 +7,7 @@ import {
   BoxProps,
   Text,
   useBreakpointValue,
+  useToast,
 } from "@chakra-ui/react";
 import { FaLinkedin, FaGithub, FaGlobe } from "react-icons/fa";
 import Link from "next/link";
@@ -19,6 +20,32 @@ const SocialMediaIcons: React.FC<SocialMediaIconsProps> = ({
   showFeedback = false,
   ...props
 }) => {
+  const toast = useToast();
+
+  const handleMailCopy = () => {
+    navigator.clipboard
+      .writeText("rrbahar@berkeley.edu")
+      .then(() => {
+        toast({
+          title: "Email copied.",
+          description: "Email address copied to clipboard.",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+      })
+      .catch((err) => {
+        console.error("Failed to copy: ", err);
+        toast({
+          title: "Error.",
+          description: "Failed to copy email address.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      });
+  };
+
   const writingMode = useBreakpointValue({
     base: "horizontal-tb",
     md: "vertical-rl",
@@ -26,8 +53,8 @@ const SocialMediaIcons: React.FC<SocialMediaIconsProps> = ({
   const textOrientation = useBreakpointValue({ base: "unset", md: "mixed" }) as
     | "unset"
     | "mixed";
-  const feedbackLink =
-    "https://mail.google.com/mail/?view=cm&fs=1&to=rrbahar@berkeley.edu&su=Blackjack-Sim%20Feedback";
+  // const feedbackLink =
+  // "https://mail.google.com/mail/?view=cm&fs=1&to=rrbahar@berkeley.edu&su=Blackjack-Sim%20Feedback";
 
   return (
     <Box
@@ -69,8 +96,12 @@ const SocialMediaIcons: React.FC<SocialMediaIconsProps> = ({
             textOrientation,
           }}
         >
-          <Text textAlign="center" className="text-[#EDF2F6]">
-            <Link href={feedbackLink}>Leave Feedback?</Link>
+          <Text
+            textAlign="center"
+            className="text-[#EDF2F6] cursor-pointer"
+            onClick={handleMailCopy}
+          >
+            Leave Feedback?
           </Text>
         </Box>
       )}
