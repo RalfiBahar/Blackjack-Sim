@@ -136,7 +136,7 @@ export default function Simulator() {
           <Link href="/" className="absolute top-5 left-5">
             <IconButton aria-label="info" icon={<ArrowBackIcon />} />
           </Link>
-          <div className="bg-light-grey justify-center flex flex-col rounded-2xl p-16 shadow-2xl w-4/5 md:w-1/2 mt-20">
+          <div className="bg-light-grey justify-center flex flex-col rounded-2xl p-4 md:p-16 shadow-2xl w-4/5 md:w-1/2 mt-20">
             <div className="flex justify-end">
               <IconButton
                 aria-label="info"
