@@ -12,7 +12,8 @@ Chart.defaults.color = "#00000";
 
 export const metadata: Metadata = {
   title: "Blackjack Simulator",
-  description: "Simulate blackjack strategies.",
+  description:
+    "Simulate your blackjack strategies. Customize betting strategies and see relevant statistics and graphs.",
   icons: {
     icon: "/icon.png",
   },
@@ -28,7 +29,10 @@ export default function RootLayout({
       <head>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="Simulate blackjack strategies." />
+        <meta
+          name="description"
+          content="Simulate your blackjack strategies. Customize betting strategies and see relevant statistics and graphs."
+        />
         <meta
           name="keywords"
           content="Blackjack, Blackjack simulator, Blackjack strategies, Card game, Casino, Online blackjack, Blackjack tactics, Blackjack tips, Card counting, Blackjack rules, Casino games, Blackjack training, Blackjack practice, Gambling, Blackjack betting, Blackjack tutorial, Casino strategy, Blackjack app, Blackjack game, Virtual blackjack, Math, Probability, Statistics, Simulation, Mathematical modeling, Probability theory, Statistical analysis, Monte Carlo simulation, Game theory, Predictive modeling, Risk assessment, Statistical simulation, Probability simulation, Decision analysis, Random variables, Data analysis, Stochastic processes, Mathematical probability, Statistical modeling, Simulation software"
