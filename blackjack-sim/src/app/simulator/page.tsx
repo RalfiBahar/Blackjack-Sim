@@ -20,7 +20,8 @@ import {
 } from "@chakra-ui/react";
 import { SocialMediaIcons } from "@/components";
 import { InitialBettingValues } from "@/constants";
-import { InfoIcon } from "@chakra-ui/icons";
+import { InfoIcon, ArrowBackIcon } from "@chakra-ui/icons";
+import Link from "next/link";
 
 const initialData: InitialData = {
   numGames: 300,
@@ -131,48 +132,57 @@ export default function Simulator() {
   return (
     <div className="flex items-center flex-col min-w-width h-full bg-bg-grey">
       {percentDoneSimulating !== 100 && (
-        <div className="bg-light-grey justify-center flex flex-col rounded-2xl p-16 shadow-2xl w-4/5 md:w-1/2 mt-20">
-          <div className="flex justify-end">
-            <IconButton
-              aria-label="info"
-              icon={<InfoIcon />}
-              onClick={onOpen}
-            />{" "}
-          </div>
-
-          <p className="text-2xl text-white font-bold text-center">Simulate</p>
-          <SimulationForm
-            initialData={initialData}
-            onSubmit={handleRunSimulation}
-          />
-          <SocialMediaIcons
-            position={{ base: "static", md: "absolute" }}
-            left={{ base: "auto", md: 2 }}
-            top={{ base: "auto", md: "50%" }}
-            transform={{ base: "none", md: "translateY(-50%)" }}
-            mt={{ base: 4, md: 0 }}
-            mb={{ base: 4, md: 0 }}
-            showFeedback={true}
-          />
-          {simulating && (
-            <div className="flex flex-col justify-center items-center">
-              <Spinner
-                thickness="5px"
-                speed="0.65s"
-                emptyColor="gray.200"
-                color="blue.500"
-                size="xl"
-                m={6}
-              />
-              <span className="text-xl text-white">Simulating...</span>
-              {numGames * numSims > 1000000 && (
-                <span className="text-lg- text-white">
-                  (This might take a while)
-                </span>
-              )}
+        <>
+          <Link href="/" className="absolute top-5 left-5">
+            <IconButton aria-label="info" icon={<ArrowBackIcon />} />
+          </Link>
+          <div className="bg-light-grey justify-center flex flex-col rounded-2xl p-16 shadow-2xl w-4/5 md:w-1/2 mt-20">
+            <div className="flex justify-end">
+              <IconButton
+                aria-label="info"
+                icon={<InfoIcon />}
+                onClick={onOpen}
+              />{" "}
             </div>
-          )}
-        </div>
+            <p className="text-2xl text-white font-bold text-center">
+              Simulate
+            </p>
+
+            <div className="items-center justify-center flex">
+              <SimulationForm
+                initialData={initialData}
+                onSubmit={handleRunSimulation}
+              />
+            </div>
+            <SocialMediaIcons
+              position={{ base: "static", md: "absolute" }}
+              left={{ base: "auto", md: 2 }}
+              top={{ base: "auto", md: "50%" }}
+              transform={{ base: "none", md: "translateY(-50%)" }}
+              mt={{ base: 4, md: 0 }}
+              mb={{ base: 4, md: 0 }}
+              showFeedback={true}
+            />
+            {simulating && (
+              <div className="flex flex-col justify-center items-center">
+                <Spinner
+                  thickness="5px"
+                  speed="0.65s"
+                  emptyColor="gray.200"
+                  color="blue.500"
+                  size="xl"
+                  m={6}
+                />
+                <span className="text-xl text-white">Simulating...</span>
+                {numGames * numSims > 1000000 && (
+                  <span className="text-lg- text-white">
+                    (This might take a while)
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+        </>
       )}
       {results && aggregate && (
         <BlackjackSimulation

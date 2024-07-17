@@ -6,10 +6,10 @@ import { InfoCard, SocialMediaIcons } from "@/components";
 export default function Home() {
   return (
     <div className="flex items-center flex-col w-full h-full bg-bg-grey">
-      <h1 className="text-6xl text-white mt-20 text-center font-bold">
+      <h1 className="text-4xl md:text-6xl text-white mt-20 text-center font-bold">
         Welcome to BlackjackSim!
       </h1>
-      <h3 className="mb-10 mt-3 text-white text-2xl italic text-center">
+      <h3 className="mb-10 mt-3 text-white text-lg md:text-2xl italic text-center">
         Simulate and optimize your blackjack strategies.
       </h3>
       <div className="flex md:flex-row flex-col w-full justify-center items-center md:items-start">

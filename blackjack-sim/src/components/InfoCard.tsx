@@ -10,7 +10,7 @@ const InfoCard: React.FC<InfoCardProps> = ({ ...props }) => {
     <Card
       {...props}
       backgroundColor={themeColors.LIGHT_GREY}
-      className="p-5 ml-5 mt-10 w-4/5 md:w-2/5 md:mt-0"
+      className="p-5 md:ml-5 mt-10 w-4/5 md:w-2/5 md:mt-0"
     >
       <h2 className="text-xl text-white font-bold">What&#39;s going on?</h2>
       <p className="text-base text-white mt-2">
