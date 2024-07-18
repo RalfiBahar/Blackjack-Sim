@@ -1,62 +1,68 @@
 import { NextRequest, NextResponse } from "next/server";
-import runSimulation from "../../../run_simulation";
-import { BET_MULTIPLIER } from "../../../constants";
+import {
+  generateCacheKey,
+  getRandomCacheEntry,
+  addCacheEntry,
+} from "../../services/fileCacheManager";
+import { processSimulation } from "../../services/simulationProcessor";
+import { BettingValues } from "@/components/types";
 
 export async function POST(req: NextRequest) {
   try {
-    const { numGames, initialBankroll, numSimulations, bettingSpread } =
-      await req.json();
+    const {
+      numGames,
+      initialBankroll,
+      numSimulations,
+      bettingSpread,
+    }: {
+      numGames: number;
+      initialBankroll: number;
+      numSimulations: number;
+      bettingSpread: BettingValues;
+    } = await req.json();
+    const cacheKey = generateCacheKey(
+      numGames,
+      initialBankroll,
+      numSimulations,
+      bettingSpread
+    );
 
-    //console.log("bs: ", bettingSpread);
-    const baseBet = initialBankroll * BET_MULTIPLIER;
-    const aggregatedData: any[] = [];
-    let totalBankruptcies = 0;
-    let combinedResults: any = {};
+    // Check if cache exists
+    const cachedData = await getRandomCacheEntry(cacheKey);
+    if (cachedData) {
+      console.log("Here");
+      const responseStream = new ReadableStream({
+        start(controller) {
+          controller.enqueue(cachedData);
+          controller.close();
+        },
+      });
+      return new NextResponse(responseStream, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    }
 
-    const stream = new ReadableStream({
-      async start(controller) {
-        for (let i = 0; i < numSimulations; i++) {
-          const result = runSimulation(
-            numGames,
-            baseBet,
-            initialBankroll,
-            bettingSpread
-          );
-          totalBankruptcies += result.summary.numBankruptcies;
-          aggregatedData.push(result.data);
+    const { stream, totalBankruptcies } = await processSimulation(
+      numGames,
+      initialBankroll,
+      numSimulations,
+      bettingSpread
+    );
 
-          // Stream the current result data
-          controller.enqueue(JSON.stringify(result.data));
-        }
+    const resultData = await streamToString(stream);
 
-        // Once all data is processed, aggregate results
-        if (aggregatedData.length > 0) {
-          const keys = Object.keys(aggregatedData[0]);
-          combinedResults = keys.reduce((acc: any, key: string) => {
-            acc[key] = aggregatedData.reduce((sum: number[], data: any) => {
-              return sum.map((val, index) => val + data[key][index]);
-            }, new Array(aggregatedData[0][key].length).fill(0));
-            return acc;
-          }, {});
+    await addCacheEntry(cacheKey, resultData);
 
-          // Calculate averages
-          Object.keys(combinedResults).forEach((key: string) => {
-            combinedResults[key] = combinedResults[key].map(
-              (val: number) => val / numSimulations
-            );
-          });
-        }
-
-        // Enqueue the final aggregated data
-        controller.enqueue(
-          JSON.stringify({ results: combinedResults, totalBankruptcies })
-        );
-
+    const responseStream = new ReadableStream({
+      start(controller) {
+        controller.enqueue(resultData);
         controller.close();
       },
     });
 
-    return new NextResponse(stream, {
+    return new NextResponse(responseStream, {
       headers: {
         "Content-Type": "application/json",
         "Total-Bankruptcies": totalBankruptcies.toString(),
@@ -67,3 +73,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Simulation failed" }, { status: 500 });
   }
 }
+
+const streamToString = async (stream: ReadableStream): Promise<string> => {
+  const reader = stream.getReader();
+  let result = "";
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    if (value) {
+      result += value;
+    }
+  }
+
+  return result;
+};
