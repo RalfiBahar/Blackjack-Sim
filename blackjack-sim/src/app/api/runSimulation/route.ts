@@ -3,6 +3,7 @@ import {
   generateCacheKey,
   getRandomCacheEntry,
   addCacheEntry,
+  addLargeCacheEntry,
 } from "../../services/fileCacheManager";
 import { processSimulation } from "../../services/simulationProcessor";
 import { BettingValues } from "@/components/types";
@@ -28,9 +29,15 @@ export async function POST(req: NextRequest) {
     );
 
     // Check if cache exists
-    const cachedData = await getRandomCacheEntry(cacheKey);
+    let cachedData = await getRandomCacheEntry(cacheKey);
+    // perform caching only if computation is big
+    /*
+    if (numGames * numSimulations < 400000) {
+      cachedData = null;
+    }
+    */
     if (cachedData) {
-      console.log("Here");
+      console.log("Retrieving from cached.");
       const responseStream = new ReadableStream({
         start(controller) {
           controller.enqueue(cachedData);
@@ -53,7 +60,16 @@ export async function POST(req: NextRequest) {
 
     const resultData = await streamToString(stream);
 
-    await addCacheEntry(cacheKey, resultData);
+    // In the background & if large computation
+    if (numGames * numSimulations >= 400000) {
+      addLargeCacheEntry(cacheKey, resultData)
+        .then(() => {
+          console.log("Added cache: ", cacheKey);
+        })
+        .catch((error) => {
+          console.error("Error adding cache entry:", error);
+        });
+    }
 
     const responseStream = new ReadableStream({
       start(controller) {
