@@ -29,14 +29,14 @@ export async function POST(req: NextRequest) {
     );
 
     // Check if cache exists
-    let cachedData = await getRandomCacheEntry(cacheKey);
+    //let cachedData = await getRandomCacheEntry(cacheKey);
     // perform caching only if computation is big
     /*
     if (numGames * numSimulations < 400000) {
       cachedData = null;
     }
     */
-    if (cachedData) {
+    /*if (cachedData) {
       console.log("Retrieving from cached.");
       const responseStream = new ReadableStream({
         start(controller) {
@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
           "Content-Type": "application/json",
         },
       });
-    }
+    }*/
 
     const { stream, totalBankruptcies } = await processSimulation(
       numGames,
@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
     const resultData = await streamToString(stream);
 
     // In the background & if large computation
-    if (numGames * numSimulations >= 400000) {
+    /*if (numGames * numSimulations >= 400000) {
       addLargeCacheEntry(cacheKey, resultData)
         .then(() => {
           console.log("Added cache: ", cacheKey);
@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
         .catch((error) => {
           console.error("Error adding cache entry:", error);
         });
-    }
+    }*/
 
     const responseStream = new ReadableStream({
       start(controller) {
