@@ -33,6 +33,7 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
   const [isAccordionOpen, setIsAccordionOpen] = useState<boolean>(false);
   const [bettingSpread, setBettingValues] =
     useState<BettingValues>(InitialBettingValues);
+  const [numberOfDecks, setNumberOfDecks] = useState<number>(1);
   const [warning, setWarning] = useState<string>("");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -44,8 +45,22 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
       return;
     }
     setWarning("");
-    onSubmit({ numGames, initialBankroll, numSimulations, bettingSpread });
+    onSubmit({
+      numGames,
+      initialBankroll,
+      numSimulations,
+      bettingSpread,
+      numberOfDecks,
+    });
     setDisabled(true);
+  };
+
+  const handleBettingValuesChange = (values: BettingValues) => {
+    setBettingValues(values);
+  };
+
+  const handleDecksChange = (value: number) => {
+    setNumberOfDecks(value);
   };
 
   return (
@@ -111,7 +126,10 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
       <div className="hidden md:block">
         <AdvancedSettingsAccordion
           onToggle={setIsAccordionOpen}
-          sendBettingValues={setBettingValues}
+          sendBettingValues={(values: BettingValues) => {
+            handleBettingValuesChange(values);
+          }}
+          sendNumberOfDecks={handleDecksChange}
         />
       </div>
     </Box>

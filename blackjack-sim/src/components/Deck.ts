@@ -1,4 +1,3 @@
-// src/components/Deck.ts
 import Card from "./Card";
 
 class Deck {
@@ -6,19 +5,21 @@ class Deck {
   numbers: (number | string)[];
   deck: Card[];
 
-  constructor() {
+  constructor(numDecks: number = 1) {
     this.suits = ["hearts", "clubs", "spades", "diamonds"];
     this.numbers = [2, 3, 4, 5, 6, 7, 8, 9, 10, "Ace", "Jack", "King", "Queen"];
     this.deck = [];
-    this.createDeck();
+    this.createDeck(numDecks);
     this.shuffleDeck();
   }
 
-  createDeck(): void {
-    for (const suit of this.suits) {
-      for (const number of this.numbers) {
-        const currentCard = new Card(suit, number.toString());
-        this.deck.push(currentCard);
+  createDeck(numDecks: number): void {
+    for (let i = 0; i < numDecks; i++) {
+      for (const suit of this.suits) {
+        for (const number of this.numbers) {
+          const currentCard = new Card(suit, number.toString());
+          this.deck.push(currentCard);
+        }
       }
     }
   }

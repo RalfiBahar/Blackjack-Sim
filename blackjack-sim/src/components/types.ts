@@ -3,6 +3,7 @@ export interface SimulationParams {
   initialBankroll: number;
   numSimulations: number;
   bettingSpread: BettingValues | undefined;
+  numberOfDecks: number;
 }
 
 export interface InitialData extends SimulationParams {

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Accordion,
   AccordionItem,
@@ -9,6 +9,8 @@ import {
   AccordionIcon,
   AccordionProps,
   Text,
+  Input,
+  FormLabel,
 } from "@chakra-ui/react";
 import { EditibleBettingSpreadTable } from ".";
 import { BettingValues } from "./types";
@@ -17,14 +19,18 @@ import { InitialBettingValues } from "@/constants";
 interface AdvancedSettingsAccordionProps {
   onToggle: (isOpen: boolean) => void;
   sendBettingValues: any;
+  sendNumberOfDecks: (value: number) => void;
 }
 
 const AdvancedSettingsAccordion: React.FC<AdvancedSettingsAccordionProps> = ({
   onToggle,
   sendBettingValues,
+  sendNumberOfDecks,
 }) => {
   const [bettingValues, setBettingValues] =
     useState<BettingValues>(InitialBettingValues);
+  const [numberOfDecks, setNumberOfDecks] = useState<number>(1);
+
   const [warning, setWarning] = useState<string | null>(null);
 
   const handleInputChange = (key: keyof BettingValues, value: string) => {
@@ -52,6 +58,11 @@ const AdvancedSettingsAccordion: React.FC<AdvancedSettingsAccordionProps> = ({
     }));
   };
 
+  const handleDecksChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(event.target.value) || 1;
+    setNumberOfDecks(value);
+    sendNumberOfDecks(value);
+  };
   return (
     <Box w="full" className="mt-3">
       <Accordion allowToggle onChange={(index) => onToggle(index === 0)}>
@@ -65,6 +76,15 @@ const AdvancedSettingsAccordion: React.FC<AdvancedSettingsAccordionProps> = ({
             </AccordionButton>
           </h2>
           <AccordionPanel pb={4}>
+            <FormLabel className="text-white">Number of Decks</FormLabel>
+            <Input
+              type="number"
+              value={numberOfDecks}
+              onChange={handleDecksChange}
+              min={1}
+              max={8}
+              className="text-white"
+            />
             <EditibleBettingSpreadTable
               bettingValues={bettingValues}
               setBettingValues={handleInputChange}

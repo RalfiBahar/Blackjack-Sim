@@ -32,6 +32,7 @@ const initialData: InitialData = {
   totalBankruptcies: 0,
   percentDoneSimulating: 0,
   bettingSpread: InitialBettingValues,
+  numberOfDecks: 1,
 };
 
 export default function Simulator() {
@@ -46,12 +47,14 @@ export default function Simulator() {
   const [simulating, setSimulating] = useState<boolean>(false);
   const [numGames, setNumGames] = useState<number>(initialData.numGames);
   const [numSims, setNumSims] = useState<number>(initialData.numSimulations);
+  const [numDecks, setNumDecks] = useState<number>(initialData.numberOfDecks);
 
   const handleRunSimulation = async (simulationParams: SimulationParams) => {
     setPercentDoneSimulating(0);
     setSimulating(true);
     setNumGames(simulationParams.numGames);
     setNumSims(simulationParams.numSimulations);
+    setNumDecks(simulationParams.numberOfDecks);
 
     try {
       const response = await fetch("/api/runSimulation", {

@@ -6,7 +6,8 @@ export const processSimulation = async (
   numGames: number,
   initialBankroll: number,
   numSimulations: number,
-  bettingSpread: BettingValues
+  bettingSpread: BettingValues,
+  numberOfDecks: number
 ): Promise<{ stream: ReadableStream; totalBankruptcies: number }> => {
   const baseBet = initialBankroll * BET_MULTIPLIER;
   const aggregatedData: any[] = [];
@@ -20,7 +21,8 @@ export const processSimulation = async (
           numGames,
           baseBet,
           initialBankroll,
-          bettingSpread
+          bettingSpread,
+          numberOfDecks
         );
         totalBankruptcies += result.summary.numBankruptcies;
         aggregatedData.push(result.data);

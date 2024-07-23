@@ -15,17 +15,20 @@ export async function POST(req: NextRequest) {
       initialBankroll,
       numSimulations,
       bettingSpread,
+      numberOfDecks,
     }: {
       numGames: number;
       initialBankroll: number;
       numSimulations: number;
       bettingSpread: BettingValues;
+      numberOfDecks: number;
     } = await req.json();
     const cacheKey = generateCacheKey(
       numGames,
       initialBankroll,
       numSimulations,
-      bettingSpread
+      bettingSpread,
+      numberOfDecks
     );
 
     // Check if cache exists
@@ -51,11 +54,14 @@ export async function POST(req: NextRequest) {
       });
     }*/
 
+    //console.log("decks", numberOfDecks);
+
     const { stream, totalBankruptcies } = await processSimulation(
       numGames,
       initialBankroll,
       numSimulations,
-      bettingSpread
+      bettingSpread,
+      numberOfDecks
     );
 
     const resultData = await streamToString(stream);

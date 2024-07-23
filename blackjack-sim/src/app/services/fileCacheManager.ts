@@ -17,7 +17,8 @@ export const generateCacheKey = (
   numGames: number,
   initialBankroll: number,
   numSimulations: number,
-  bettingSpread: BettingValues
+  bettingSpread: BettingValues,
+  numberOfDecks: number
 ) => {
   return `${numGames}-${initialBankroll}-${numSimulations}-${Object.values(
     bettingSpread

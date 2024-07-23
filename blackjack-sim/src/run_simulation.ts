@@ -34,7 +34,8 @@ function runSimulation(
   numGames: number,
   baseBet: number,
   initialBankroll: number,
-  bettingSpread: BettingSpread
+  bettingSpread: BettingSpread,
+  numberOfDecks: number = 1
 ): SimulationResult {
   const results: Results = {
     player_blackjack: 0,
@@ -68,7 +69,9 @@ function runSimulation(
   const betsVsRunningCount: [number, number][] = [];
   const bankrollOverTime: number[] = [];
 
-  let deck = new Deck();
+  let deck = new Deck(numberOfDecks);
+  const percentage = Math.random() * (0.4 - 0.2) + 0.2;
+  const reshuffleThreshold = Math.floor(deck.deck.length * percentage);
 
   const data: SimulationData = {
     "Total Net Profit": [],
@@ -88,8 +91,8 @@ function runSimulation(
   };
 
   for (let i = 0; i < numGames; i++) {
-    if (deck.deck.length <= 15) {
-      deck = new Deck();
+    if (deck.deck.length <= reshuffleThreshold) {
+      deck = new Deck(numberOfDecks);
       runningCount = 0;
     }
 
