@@ -25,10 +25,10 @@ const BettingSpreadTable: React.FC<BettinSpreadTableProps> = ({ ...props }) => {
         margin="0 auto"
       >
         <Table variant="simple" size={"sm"}>
-          <TableCaption>Betting Strategy Based on Running Count</TableCaption>
+          <TableCaption>Betting Strategy Based on True Count</TableCaption>
           <Thead>
             <Tr>
-              <Th isNumeric>Running Count</Th>
+              <Th isNumeric>True Count</Th>
               <Th>Bet</Th>
               <Th isNumeric>Example (base bet $10)</Th>
             </Tr>

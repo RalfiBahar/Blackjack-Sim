@@ -1,93 +1,51 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  generateCacheKey,
-  getRandomCacheEntry,
-  addCacheEntry,
-  addLargeCacheEntry,
-} from "../../services/fileCacheManager";
 import { processSimulation } from "../../services/simulationProcessor";
 import { BettingValues } from "@/components/types";
 
 export async function POST(req: NextRequest) {
   try {
+    const body = await req.json();
     const {
       numGames,
       initialBankroll,
       numSimulations,
       bettingSpread,
       numberOfDecks,
+      penetration,
+      compareBettingSpread,
+      useClientWorkers,
     }: {
       numGames: number;
       initialBankroll: number;
       numSimulations: number;
       bettingSpread: BettingValues;
       numberOfDecks: number;
-    } = await req.json();
-    const cacheKey = generateCacheKey(
-      numGames,
-      initialBankroll,
-      numSimulations,
-      bettingSpread,
-      numberOfDecks
-    );
+      penetration?: number;
+      compareBettingSpread?: BettingValues;
+      useClientWorkers?: boolean;
+    } = body;
 
-    // Check if cache exists
-    //let cachedData = await getRandomCacheEntry(cacheKey);
-    // perform caching only if computation is big
-    /*
-    if (numGames * numSimulations < 400000) {
-      cachedData = null;
+    if (useClientWorkers) {
+      return NextResponse.json(
+        { error: "Client-side workers should run in the browser." },
+        { status: 400 }
+      );
     }
-    */
-    /*if (cachedData) {
-      console.log("Retrieving from cached.");
-      const responseStream = new ReadableStream({
-        start(controller) {
-          controller.enqueue(cachedData);
-          controller.close();
-        },
-      });
-      return new NextResponse(responseStream, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-    }*/
 
-    //console.log("decks", numberOfDecks);
-
-    const { stream, totalBankruptcies } = await processSimulation(
+    const stream = processSimulation({
       numGames,
       initialBankroll,
       numSimulations,
       bettingSpread,
-      numberOfDecks
-    );
-
-    const resultData = await streamToString(stream);
-
-    // In the background & if large computation
-    /*if (numGames * numSimulations >= 400000) {
-      addLargeCacheEntry(cacheKey, resultData)
-        .then(() => {
-          console.log("Added cache: ", cacheKey);
-        })
-        .catch((error) => {
-          console.error("Error adding cache entry:", error);
-        });
-    }*/
-
-    const responseStream = new ReadableStream({
-      start(controller) {
-        controller.enqueue(resultData);
-        controller.close();
-      },
+      numberOfDecks,
+      penetration,
+      compareBettingSpread,
     });
 
-    return new NextResponse(responseStream, {
+    return new NextResponse(stream, {
       headers: {
-        "Content-Type": "application/json",
-        "Total-Bankruptcies": totalBankruptcies.toString(),
+        "Content-Type": "application/x-ndjson",
+        "Cache-Control": "no-store",
       },
     });
   } catch (error) {
@@ -95,18 +53,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Simulation failed" }, { status: 500 });
   }
 }
-
-const streamToString = async (stream: ReadableStream): Promise<string> => {
-  const reader = stream.getReader();
-  let result = "";
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    if (value) {
-      result += value;
-    }
-  }
-
-  return result;
-};

@@ -64,6 +64,38 @@ function normInv(
   return mean + standardDeviation * retVal;
 }
 
+export function computeConfidenceInterval(
+  values: number[],
+  confidenceLevel: number = 0.95
+): { mean: number; margin: number; low: number; high: number; n: number } {
+  const n = values.length;
+  if (n === 0) {
+    return { mean: 0, margin: 0, low: 0, high: 0, n: 0 };
+  }
+  const mean = values.reduce((a, b) => a + b, 0) / n;
+  if (n === 1) {
+    return { mean, margin: 0, low: mean, high: mean, n: 1 };
+  }
+  const variance =
+    values.reduce((sum, v) => sum + (v - mean) ** 2, 0) / (n - 1);
+  const std = Math.sqrt(variance);
+  const zScore = normInv((1 + confidenceLevel) / 2);
+  const margin = zScore * (std / Math.sqrt(n));
+  return { mean, margin, low: mean - margin, high: mean + margin, n };
+}
+
+export function resultsToCsv(results: Record<string, number[]>): string {
+  const keys = Object.keys(results);
+  if (keys.length === 0) return "";
+  const rowCount = results[keys[0]].length;
+  const header = keys.join(",");
+  const rows: string[] = [header];
+  for (let i = 0; i < rowCount; i++) {
+    rows.push(keys.map((k) => results[k][i]).join(","));
+  }
+  return rows.join("\n");
+}
+
 export function calculateRequiredGames(
   standardDeviation: number,
   accuracy: number,

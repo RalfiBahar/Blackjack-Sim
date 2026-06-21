@@ -6,7 +6,6 @@ import SimulationForm from "@/components/SimulationForm";
 import { InitialData, SimulationParams } from "@/components/types";
 import { CustomProgressBar } from "@/components";
 import {
-  Spinner,
   IconButton,
   Modal,
   ModalOverlay,
@@ -16,12 +15,15 @@ import {
   ModalCloseButton,
   ModalFooter,
   Button,
+  Text,
   useDisclosure,
 } from "@chakra-ui/react";
 import { SocialMediaIcons } from "@/components";
 import { InitialBettingValues } from "@/constants";
 import { InfoIcon, ArrowBackIcon } from "@chakra-ui/icons";
 import Link from "next/link";
+import { runClientSimulation } from "@/runSimulationClient";
+import type { StreamEvent } from "@/simulationStream";
 
 const initialData: InitialData = {
   numGames: 300,
@@ -35,126 +37,175 @@ const initialData: InitialData = {
   numberOfDecks: 1,
 };
 
+async function consumeNdjsonStream(
+  response: Response,
+  onProgress: (pct: number, label?: string) => void
+): Promise<{
+  results: Record<string, number[]>;
+  aggregate: Record<string, number[]>[];
+  totalBankruptcies: number;
+  compareResults?: Record<string, number[]>;
+  compareTotalBankruptcies?: number;
+  compareAggregate?: Record<string, number[]>[];
+}> {
+  const reader = response.body?.getReader();
+  if (!reader) throw new Error("No response body");
+
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let results: Record<string, number[]> | null = null;
+  let compareResults: Record<string, number[]> | undefined;
+  let totalBankruptcies = 0;
+  let compareTotalBankruptcies: number | undefined;
+  let compareAggregate: Record<string, number[]>[] | undefined;
+  const aggregate: Record<string, number[]>[] = [];
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+
+    let newline: number;
+    while ((newline = buffer.indexOf("\n")) !== -1) {
+      const line = buffer.slice(0, newline).trim();
+      buffer = buffer.slice(newline + 1);
+      if (!line) continue;
+
+      const event = JSON.parse(line) as StreamEvent;
+      if (event.type === "progress") {
+        onProgress((event.completed / event.total) * 100, event.label);
+      } else if (event.type === "chunk") {
+        aggregate.push(event.data);
+      } else if (event.type === "complete") {
+        results = event.results;
+        totalBankruptcies = event.totalBankruptcies;
+        compareResults = event.compareResults;
+        compareTotalBankruptcies = event.compareTotalBankruptcies;
+        compareAggregate = event.compareAggregate;
+      }
+    }
+  }
+
+  if (!results) throw new Error("Simulation did not return results");
+  return {
+    results,
+    aggregate,
+    totalBankruptcies,
+    compareResults,
+    compareTotalBankruptcies,
+    compareAggregate,
+  };
+}
+
 export default function Simulator() {
   const [results, setResults] = useState<any>(initialData.results);
+  const [compareResults, setCompareResults] = useState<any>(null);
+  const [compareAggregate, setCompareAggregate] = useState<any>(null);
   const [aggregate, setAggregate] = useState<any>(initialData.aggregate);
   const [totalBankruptcies, setTotalBankruptcies] = useState<number>(
     initialData.totalBankruptcies
   );
+  const [compareTotalBankruptcies, setCompareTotalBankruptcies] =
+    useState<number>(0);
   const [percentDoneSimulating, setPercentDoneSimulating] = useState<number>(
     initialData.percentDoneSimulating
   );
+  const [progressLabel, setProgressLabel] = useState<string>("");
   const [simulating, setSimulating] = useState<boolean>(false);
-  const [numGames, setNumGames] = useState<number>(initialData.numGames);
-  const [numSims, setNumSims] = useState<number>(initialData.numSimulations);
-  const [numDecks, setNumDecks] = useState<number>(initialData.numberOfDecks);
+  const [lastParams, setLastParams] = useState<SimulationParams | null>(null);
+  const [simulationError, setSimulationError] = useState<string>("");
 
   const handleRunSimulation = async (simulationParams: SimulationParams) => {
     setPercentDoneSimulating(0);
+    setProgressLabel("");
     setSimulating(true);
-    setNumGames(simulationParams.numGames);
-    setNumSims(simulationParams.numSimulations);
-    setNumDecks(simulationParams.numberOfDecks);
+    setSimulationError("");
+    setLastParams(simulationParams);
+    setResults(null);
+    setCompareResults(null);
+
+    const onProgress = (pct: number, label?: string) => {
+      setPercentDoneSimulating(Math.min(99, pct));
+      if (label) setProgressLabel(`Spread ${label}`);
+    };
 
     try {
-      const response = await fetch("/api/runSimulation", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(simulationParams),
-      });
-
-      if (!response.ok) {
-        console.error("Failed to fetch simulation results");
-        return;
-      }
-
-      const reader = response.body?.getReader();
-      if (!reader) {
-        console.error("Failed to get reader from response body");
-        return;
-      }
-
-      const textDecoder = new TextDecoder();
-      let done = false;
-      let partialData = "";
-      let combinedResults = null;
-      const aggregatedData = [];
-
-      while (!done) {
-        const { value, done: streamDone } = await reader.read();
-        done = streamDone;
-        if (value) {
-          partialData += textDecoder.decode(value, { stream: true });
-
-          let boundaryIndex;
-          while ((boundaryIndex = partialData.indexOf("}{")) !== -1) {
-            const jsonString = partialData.slice(0, boundaryIndex + 1);
-            partialData = partialData.slice(boundaryIndex + 1);
-            try {
-              const parsedChunk = JSON.parse(jsonString);
-              if (parsedChunk.results) {
-                combinedResults = parsedChunk.results;
-                setTotalBankruptcies(parsedChunk.totalBankruptcies);
-              } else {
-                aggregatedData.push(parsedChunk);
+      if (simulationParams.useClientWorkers) {
+        const { BET_MULTIPLIER } = await import("@/constants");
+        const base = {
+          numGames: simulationParams.numGames,
+          baseBet: simulationParams.initialBankroll * BET_MULTIPLIER,
+          initialBankroll: simulationParams.initialBankroll,
+          numberOfDecks: simulationParams.numberOfDecks,
+          penetration: simulationParams.penetration,
+        };
+        const outcome = await runClientSimulation(
+          {
+            ...base,
+            bettingSpread: simulationParams.bettingSpread ?? InitialBettingValues,
+          },
+          simulationParams.numSimulations,
+          simulationParams.compareBettingSpread
+            ? {
+                ...base,
+                bettingSpread: simulationParams.compareBettingSpread,
               }
-            } catch (error) {
-              console.error("Error parsing JSON:", error);
-            }
-          }
-        }
+            : null,
+          (completed, total, label) =>
+            onProgress((completed / total) * 100, label)
+        );
+        setResults(outcome.results);
+        setAggregate(outcome.aggregate);
+        setTotalBankruptcies(outcome.totalBankruptcies);
+        setCompareResults(outcome.compareResults ?? null);
+        setCompareTotalBankruptcies(outcome.compareTotalBankruptcies ?? 0);
+        setCompareAggregate(outcome.compareAggregate ?? null);
+      } else {
+        const response = await fetch("/api/runSimulation", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(simulationParams),
+        });
+        if (!response.ok) throw new Error("Simulation request failed");
+        const outcome = await consumeNdjsonStream(response, onProgress);
+        setResults(outcome.results);
+        setAggregate(outcome.aggregate);
+        setTotalBankruptcies(outcome.totalBankruptcies);
+        setCompareResults(outcome.compareResults ?? null);
+        setCompareTotalBankruptcies(outcome.compareTotalBankruptcies ?? 0);
+        setCompareAggregate(outcome.compareAggregate ?? null);
       }
-
-      if (partialData.length > 0) {
-        try {
-          const parsedChunk = JSON.parse(partialData);
-          if (parsedChunk.results) {
-            combinedResults = parsedChunk.results;
-            setTotalBankruptcies(parsedChunk.totalBankruptcies);
-          } else {
-            aggregatedData.push(parsedChunk);
-          }
-        } catch (error) {
-          console.error("Error parsing final JSON object:", error);
-        }
-      }
-
-      setResults(combinedResults);
-      setAggregate(aggregatedData);
       setPercentDoneSimulating(100);
-      setSimulating(false);
     } catch (error) {
       console.error("Error running simulation:", error);
+      setSimulationError("Simulation failed. Try fewer games or disable Web Workers.");
+      setPercentDoneSimulating(0);
+    } finally {
+      setSimulating(false);
     }
   };
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const showForm = percentDoneSimulating !== 100 || !results;
 
   return (
     <div className="flex items-center flex-col min-w-width h-full bg-bg-grey">
-      {percentDoneSimulating !== 100 && (
+      {showForm && (
         <>
           <Link href="/" className="absolute top-5 left-5">
-            <IconButton aria-label="info" icon={<ArrowBackIcon />} />
+            <IconButton aria-label="back" icon={<ArrowBackIcon />} />
           </Link>
           <div className="bg-light-grey justify-center flex flex-col rounded-2xl p-4 md:p-16 shadow-2xl w-4/5 md:w-1/2 mt-20">
             <div className="flex justify-end">
-              <IconButton
-                aria-label="info"
-                icon={<InfoIcon />}
-                onClick={onOpen}
-              />{" "}
+              <IconButton aria-label="info" icon={<InfoIcon />} onClick={onOpen} />
             </div>
-            <p className="text-2xl text-white font-bold text-center">
-              Simulate
-            </p>
+            <p className="text-2xl text-white font-bold text-center">Simulate</p>
 
             <div className="items-center justify-center flex">
               <SimulationForm
                 initialData={initialData}
                 onSubmit={handleRunSimulation}
+                disabled={simulating}
               />
             </div>
             <SocialMediaIcons
@@ -167,32 +218,30 @@ export default function Simulator() {
               showFeedback={true}
             />
             {simulating && (
-              <div className="flex flex-col justify-center items-center">
-                <Spinner
-                  thickness="5px"
-                  speed="0.65s"
-                  emptyColor="gray.200"
-                  color="blue.500"
-                  size="xl"
-                  m={6}
-                />
-                <span className="text-xl text-white">Simulating...</span>
-                {numGames * numSims > 1000000 && (
-                  <span className="text-lg- text-white">
-                    (This might take a while)
-                  </span>
-                )}
+              <div className="flex flex-col justify-center items-center mt-4 w-full px-4">
+                <Text className="text-white mb-2">
+                  Simulating… {progressLabel && `(${progressLabel})`}
+                </Text>
+                <CustomProgressBar progress={percentDoneSimulating} />
               </div>
+            )}
+            {simulationError && (
+              <Text color="red.400" mt={4} textAlign="center">
+                {simulationError}
+              </Text>
             )}
           </div>
         </>
       )}
-      {results && aggregate && (
+      {results && aggregate && lastParams && percentDoneSimulating === 100 && (
         <BlackjackSimulation
-          initialData={initialData}
+          initialData={{ ...initialData, ...lastParams }}
           results={results}
           aggregate={aggregate}
           totalBankruptcies={totalBankruptcies}
+          compareResults={compareResults}
+          compareTotalBankruptcies={compareTotalBankruptcies}
+          compareAggregate={compareAggregate}
         />
       )}
       <Modal onClose={onClose} size="md" isOpen={isOpen}>
@@ -201,10 +250,9 @@ export default function Simulator() {
           <ModalHeader>Rules</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            {/* TODO: Write rules*/}
             - Player plays based on basic strategy.
             <br />
-            - Player uses Hi-Lo method.
+            - Player uses Hi-Lo true count for bet sizing (count ÷ decks remaining).
             <br />
             - Dealer stands on soft 17.
             <br />
@@ -224,23 +272,11 @@ export default function Simulator() {
             <br />
             - Surrender is not allowed.
             <br />
-            - If the player busts, the dealer wins regardless of the
-            dealer&#39;s hand.
-            <br />
-            - Running count is reset when there are 15 or fewer cards in the
-            deck.
+            - Running count resets when shoe penetration is reached (default 75%).
             <br />
             - Base bet is 0.1% of initial bankroll.
             <br />
-            - Betting amount is adjusted based on the running count.
-            <br />
-            - Bankroll management: If bankroll is less than the bet amount, the
-            simulation ends.
-            <br />
-            - Bankroll is tracked over time to observe performance trends.
-            <br />
-            - The simulation tracks the number of bankruptcies.
-            <br />
+            - Optional A/B spread comparison and browser Web Worker parallel runs.
           </ModalBody>
           <ModalFooter>
             <Button onClick={onClose}>Close</Button>

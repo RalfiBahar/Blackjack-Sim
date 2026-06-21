@@ -17,7 +17,8 @@ const InfoCard: React.FC<InfoCardProps> = ({ ...props }) => {
         This is a blackjack simulator. It makes use of optimal/basic strategy
         and card counting to play the game. The simulator does this A LOT of
         times (you can decide how much though). It has an implemented betting
-        strategy to bet based on the running count. Finally the simulator will
+        strategy to bet based on the Hi-Lo true count (running count divided by
+        decks remaining). Finally the simulator will
         show you the expected value, profit, win rate, and many more aggregated
         statistics.
       </p>

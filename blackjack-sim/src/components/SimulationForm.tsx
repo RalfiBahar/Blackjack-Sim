@@ -11,16 +11,18 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { AdvancedSettingsAccordion } from ".";
-import { InitialBettingValues } from "@/constants";
+import { InitialBettingValues, DEFAULT_PENETRATION } from "@/constants";
 
 interface SimulationFormProps {
   initialData: InitialData;
   onSubmit: (data: SimulationParams) => void;
+  disabled?: boolean;
 }
 
 const SimulationForm: React.FC<SimulationFormProps> = ({
   initialData,
   onSubmit,
+  disabled = false,
 }) => {
   const [numGames, setNumGames] = useState<number>(initialData.numGames);
   const [initialBankroll, setInitialBankroll] = useState<number>(
@@ -29,11 +31,16 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
   const [numSimulations, setNumSimulations] = useState<number>(
     initialData.numSimulations
   );
-  const [disabled, setDisabled] = useState<boolean>(false);
-  const [isAccordionOpen, setIsAccordionOpen] = useState<boolean>(false);
   const [bettingSpread, setBettingValues] =
     useState<BettingValues>(InitialBettingValues);
+  const [compareBettingSpread, setCompareBettingSpread] =
+    useState<BettingValues>(InitialBettingValues);
   const [numberOfDecks, setNumberOfDecks] = useState<number>(1);
+  const [penetration, setPenetration] = useState<number>(
+    DEFAULT_PENETRATION * 100
+  );
+  const [enableCompare, setEnableCompare] = useState(false);
+  const [useClientWorkers, setUseClientWorkers] = useState(true);
   const [warning, setWarning] = useState<string>("");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -51,16 +58,10 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
       numSimulations,
       bettingSpread,
       numberOfDecks,
+      penetration: penetration / 100,
+      compareBettingSpread: enableCompare ? compareBettingSpread : undefined,
+      useClientWorkers,
     });
-    setDisabled(true);
-  };
-
-  const handleBettingValuesChange = (values: BettingValues) => {
-    setBettingValues(values);
-  };
-
-  const handleDecksChange = (value: number) => {
-    setNumberOfDecks(value);
   };
 
   return (
@@ -72,12 +73,10 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
       borderWidth={5}
       borderRadius="md"
       boxShadow="md"
-      className={`border-white transition-all duration-300 w-full`}
+      className="border-white transition-all duration-300 w-full"
     >
       <FormControl id="numGames" mb={4}>
-        <FormLabel className="text-white">
-          Number of Games to Simulate
-        </FormLabel>
+        <FormLabel className="text-white">Number of Games to Simulate</FormLabel>
         <Input
           type="number"
           value={numGames}
@@ -123,15 +122,19 @@ const SimulationForm: React.FC<SimulationFormProps> = ({
       >
         Run Simulation
       </Button>
-      <div className="hidden md:block">
-        <AdvancedSettingsAccordion
-          onToggle={setIsAccordionOpen}
-          sendBettingValues={(values: BettingValues) => {
-            handleBettingValuesChange(values);
-          }}
-          sendNumberOfDecks={handleDecksChange}
-        />
-      </div>
+      <AdvancedSettingsAccordion
+        onToggle={() => {}}
+        sendBettingValues={(values: BettingValues) => setBettingValues(values)}
+        sendCompareBettingValues={(values: BettingValues) =>
+          setCompareBettingSpread(values)
+        }
+        sendNumberOfDecks={setNumberOfDecks}
+        sendPenetration={(value) => setPenetration(value * 100)}
+        enableCompare={enableCompare}
+        onEnableCompareChange={setEnableCompare}
+        useClientWorkers={useClientWorkers}
+        onUseClientWorkersChange={setUseClientWorkers}
+      />
     </Box>
   );
 };

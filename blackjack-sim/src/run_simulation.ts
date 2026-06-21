@@ -2,6 +2,7 @@
 
 import Deck from "./components/Deck";
 import BlackjackGame from "./components/BlackjackGame";
+import { DEFAULT_PENETRATION } from "./constants";
 
 interface SimulationData {
   [key: string]: number[];
@@ -11,32 +12,116 @@ interface Results {
   [key: string]: number;
 }
 
-interface SimulationResult {
+export interface SimulationSummary {
+  playerWinRate: number;
+  dealerWinRate: number;
+  tieRate: number;
+  expectedValuePerGame: number;
+  houseEdge: number;
+  netProfit: number;
+  totalBets: number;
+  finalBankroll: number;
+  numBankruptcies: number;
+}
+
+export interface SimulationResult {
   data: SimulationData;
-  summary: {
-    playerWinRate: number;
-    dealerWinRate: number;
-    tieRate: number;
-    expectedValuePerGame: number;
-    houseEdge: number;
-    netProfit: number;
-    totalBets: number;
-    finalBankroll: number;
-    numBankruptcies: number;
-  };
+  summary: SimulationSummary;
+}
+
+export interface RunSimulationOptions {
+  numGames: number;
+  baseBet: number;
+  initialBankroll: number;
+  bettingSpread: Record<string, number>;
+  numberOfDecks?: number;
+  penetration?: number;
 }
 
 interface BettingSpread {
   [key: string]: number;
 }
 
-function runSimulation(
-  numGames: number,
+export function trueCountForBetting(
+  runningCount: number,
+  deck: Deck
+): number {
+  const decksRemaining = Math.max(0.25, deck.cardsRemaining() / 52);
+  return Math.trunc(runningCount / decksRemaining);
+}
+
+/** @deprecated Use trueCountForBetting — bet sizing always uses true count. */
+export function countForBetting(
+  runningCount: number,
+  deck: Deck,
+  _numberOfDecks?: number,
+  _bettingMode?: string
+): number {
+  return trueCountForBetting(runningCount, deck);
+}
+
+export function resolveBetAmount(
   baseBet: number,
-  initialBankroll: number,
+  runningCount: number,
   bettingSpread: BettingSpread,
-  numberOfDecks: number = 1
+  deck: Deck,
+  _numberOfDecks: number = 1
+): number {
+  const count = trueCountForBetting(runningCount, deck);
+
+  for (const key in bettingSpread) {
+    let betMultiplier = 1;
+    if (count < 0 && key === "-1") {
+      betMultiplier = bettingSpread["-1"];
+    } else if (key.includes("-")) {
+      const [min, max] = key.split("-").map(Number);
+      if (count >= min && count <= max) {
+        betMultiplier = bettingSpread[key];
+      }
+    } else {
+      const singleValue = Number(key);
+      if (count === singleValue) {
+        betMultiplier = bettingSpread[key];
+      }
+    }
+    if (betMultiplier !== 1) {
+      return baseBet * betMultiplier;
+    }
+  }
+  return baseBet;
+}
+
+function runSimulation(
+  numGamesOrOptions: number | RunSimulationOptions,
+  baseBet?: number,
+  initialBankroll?: number,
+  bettingSpread: BettingSpread = {},
+  numberOfDecks: number = 1,
+  penetration: number = DEFAULT_PENETRATION
 ): SimulationResult {
+  let opts: RunSimulationOptions;
+  if (typeof numGamesOrOptions === "object") {
+    opts = numGamesOrOptions;
+  } else {
+    opts = {
+      numGames: numGamesOrOptions,
+      baseBet: baseBet!,
+      initialBankroll: initialBankroll!,
+      bettingSpread,
+      numberOfDecks,
+      penetration,
+    };
+  }
+
+  const {
+    numGames,
+    baseBet: bet,
+    initialBankroll: bankrollStart,
+    bettingSpread: spread,
+  } = opts;
+  numberOfDecks = opts.numberOfDecks ?? 1;
+  penetration = opts.penetration ?? DEFAULT_PENETRATION;
+
   const results: Results = {
     player_blackjack: 0,
     player_bust: 0,
@@ -59,19 +144,15 @@ function runSimulation(
   let totalLosses = 0;
   let totalBets = 0;
   let numBankruptcies = 0;
-  let netProfit = 0;
 
-  let bankroll = initialBankroll;
+  let bankroll = bankrollStart;
   let runningCount = 0;
-  const betSizes: number[] = [];
-  const prof: number[] = [];
-  const runningCounts: number[] = [];
-  const betsVsRunningCount: [number, number][] = [];
-  const bankrollOverTime: number[] = [];
 
   let deck = new Deck(numberOfDecks);
-  const percentage = Math.random() * (0.4 - 0.2) + 0.2;
-  const reshuffleThreshold = Math.floor(deck.deck.length * percentage);
+  const clampedPenetration = Math.min(0.95, Math.max(0.5, penetration));
+  const reshuffleThreshold = Math.floor(
+    deck.initialSize * (1 - clampedPenetration)
+  );
 
   const data: SimulationData = {
     "Total Net Profit": [],
@@ -90,117 +171,71 @@ function runSimulation(
     "Number of Bankruptcies": [],
   };
 
+  let gamesPlayed = 0;
+
   for (let i = 0; i < numGames; i++) {
-    if (deck.deck.length <= reshuffleThreshold) {
+    if (deck.cardsRemaining() <= reshuffleThreshold) {
       deck = new Deck(numberOfDecks);
       runningCount = 0;
     }
 
-    const game = new BlackjackGame(deck, runningCount);
+    const betAmount = spread
+      ? resolveBetAmount(bet, runningCount, spread, deck, numberOfDecks)
+      : bet;
 
-    let betAmount = baseBet;
-    if (bettingSpread) {
-      for (const count in bettingSpread) {
-        let betMultiplier = 1;
-        if (runningCount < 0 && count === "-1") {
-          betMultiplier = bettingSpread["-1"];
-        } else if (count.includes("-")) {
-          const [min, max] = count.split("-").map(Number);
-          if (runningCount >= min && runningCount <= max) {
-            betMultiplier = bettingSpread[count];
-          }
-        } else {
-          const singleValue = Number(count);
-          if (runningCount === singleValue) {
-            betMultiplier = bettingSpread[count];
-          }
-        }
-        if (betMultiplier !== 1) {
-          betAmount = baseBet * betMultiplier;
-          break;
-        }
-      }
-    } else {
-      if (runningCount <= -1) {
-        betAmount = baseBet;
-      } else if (runningCount == 0 || runningCount == 1) {
-        betAmount = baseBet;
-      } else if (runningCount == 2) {
-        betAmount = baseBet * 4;
-      } else if (runningCount == 3) {
-        betAmount = baseBet * 6;
-      } else if (runningCount == 4) {
-        betAmount = baseBet * 8;
-      } else if (runningCount == 5) {
-        betAmount = baseBet * 12;
-      } else if (runningCount >= 6 && runningCount <= 9) {
-        betAmount = baseBet * 16;
-      } else if (runningCount >= 10) {
-        betAmount = baseBet * 32;
-      } else {
-        betAmount = baseBet;
-      }
-    }
     if (bankroll < betAmount) {
       numBankruptcies += 1;
       break;
     }
 
-    betSizes.push(betAmount);
-    betsVsRunningCount.push([runningCount, betAmount]);
+    const game = new BlackjackGame(deck, runningCount);
+    const gameResult = game.startGame(betAmount);
 
-    const result = game.startGame();
-    totalBets += betAmount;
-    let currGameNetProfit = 0;
+    totalBets += gameResult.totalWagered;
+    const currGameNetProfit = gameResult.totalProfit;
+    totalWinnings += Math.max(0, currGameNetProfit);
+    totalLosses += Math.max(0, -currGameNetProfit);
 
-    if (result === "player_blackjack") {
-      results.player_blackjack += 1;
-      totalWinnings += betAmount * 1.5;
-      currGameNetProfit += betAmount * 1.5;
-    } else if (result.includes("player_win")) {
-      const parts = result.split("player_win");
-      const numWins = parseInt(parts[0]);
-      if (parts.length > 1 && parts[1].startsWith("_")) {
-        const numTies = parseInt(parts[1].split("_")[1].split("tie")[0]);
-        totalTies += numTies;
-      }
-      totalWinnings += betAmount * numWins;
-      currGameNetProfit += betAmount * numWins;
-      totalWins[numWins] += 1;
-    } else if (result === "dealer_win") {
+    if (gameResult.playerBlackjack) results.player_blackjack += 1;
+    if (gameResult.playerBust) results.player_bust += 1;
+    if (gameResult.dealerWin && gameResult.winCount === 0) {
       results.dealer_win += 1;
-      totalLosses += betAmount;
-      currGameNetProfit -= betAmount;
-    } else if (result === "player_bust") {
-      results.player_bust += 1;
-      totalLosses += betAmount;
-      currGameNetProfit -= betAmount;
-    } else if (result === "tie") {
+    }
+    if (
+      gameResult.tieCount === gameResult.hands.length &&
+      gameResult.winCount === 0
+    ) {
       results.tie += 1;
     }
+    if (gameResult.winCount > 0) {
+      totalWins[gameResult.winCount] =
+        (totalWins[gameResult.winCount] ?? 0) + 1;
+    }
+    totalTies += gameResult.tieCount;
 
     bankroll += currGameNetProfit;
-    bankrollOverTime.push(bankroll);
+    gamesPlayed += 1;
 
-    netProfit = totalWinnings - totalLosses;
+    const netProfit = bankroll - bankrollStart;
     data["Total Net Profit"].push(netProfit);
     data["Current Game Net Profit"].push(currGameNetProfit);
-    data["Running Count"].push(game.runningCount);
-    data["Bet Amount"].push(betAmount);
+    data["Running Count"].push(gameResult.runningCount);
+    data["Bet Amount"].push(gameResult.totalWagered);
     data["Current Bankroll"].push(bankroll);
 
-    runningCount = game.runningCount;
-    runningCounts.push(runningCount);
+    runningCount = gameResult.runningCount;
   }
 
+  const denom = gamesPlayed || 1;
   const playerWinRate =
     (Object.values(totalWins).reduce((a, b) => a + b, 0) +
       results.player_blackjack +
       results.tie / 2) /
-    numGames;
-  const dealerWinRate = results.dealer_win / numGames;
-  const tieRate = (results.tie + totalTies) / numGames;
-  const expectedValuePerGame = netProfit / numGames;
+    denom;
+  const dealerWinRate = results.dealer_win / denom;
+  const tieRate = (results.tie + totalTies) / denom;
+  const netProfit = bankroll - bankrollStart;
+  const expectedValuePerGame = netProfit / denom;
   const expectedValuePerBet = totalBets === 0 ? 0 : netProfit / totalBets;
   const houseEdge = -expectedValuePerBet * 100;
 

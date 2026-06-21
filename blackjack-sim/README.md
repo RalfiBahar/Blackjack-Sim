@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# blackjack-sim — Next.js App
 
-## Getting Started
+Production web application for the [Blackjack-Sim](../) project.
 
-First, run the development server:
+## Prerequisites
+
+- Node.js 18+
+- npm
+
+## Commands
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
+npm run build    # production build
+npm run start    # serve production build
+npm run lint     # eslint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Routes
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Route | Description |
+|-------|-------------|
+| `/` | Landing page |
+| `/simulator` | Simulation form + results dashboard |
+| `POST /api/runSimulation` | Runs Monte Carlo; streams JSON chunks |
+| `GET /api/refreshCache` | Clears S3 cache (requires AWS credentials) |
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Key source files
 
-## Learn More
+| File | Purpose |
+|------|---------|
+| `src/run_simulation.ts` | Monte Carlo loop, betting spread, P&L series |
+| `src/components/BlackjackGame.ts` | Single-hand game logic |
+| `src/strategies.ts` | Basic strategy lookup tables |
+| `src/components/Deck.ts` | Multi-deck shoe |
+| `src/app/services/simulationProcessor.ts` | Aggregates N simulation runs |
+| `src/components/BlackjackSimulation.tsx` | Results charts |
 
-To learn more about Next.js, take a look at the following resources:
+## Configuration
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Constants in `src/constants.ts`:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- `BET_MULTIPLIER = 0.001` → base bet = 0.1% of initial bankroll
+- `GAMES_PLAYED_PER_HOUR = 200`
+- `InitialBettingValues` — default Hi-Lo spread multipliers
 
-## Deploy on Vercel
+Simulation limit: `numGames × numSimulations ≤ 3,000,000` (enforced in form).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Environment variables
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Optional (S3 cache — route logic currently commented out):
+
+```
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_REGION=
+```
+
+## Architecture
+
+See [../docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md) and [../docs/KNOWN-ISSUES.md](../docs/KNOWN-ISSUES.md).
+
+## Deployment
+
+Configured for [Vercel](https://vercel.com) (`vercel.json`). Analytics and Speed Insights are enabled in `layout.tsx`.

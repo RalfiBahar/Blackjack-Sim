@@ -43,6 +43,8 @@ import {
 } from "@chakra-ui/react";
 import { themeColors } from "@/constants";
 
+import { resultsToCsv } from "@/utils";
+
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -59,6 +61,9 @@ interface BlackjackSimulationProps {
   results: any;
   aggregate: any;
   totalBankruptcies: number;
+  compareResults?: any;
+  compareTotalBankruptcies?: number;
+  compareAggregate?: any;
 }
 
 const BlackjackSimulation: React.FC<BlackjackSimulationProps> = ({
@@ -66,6 +71,9 @@ const BlackjackSimulation: React.FC<BlackjackSimulationProps> = ({
   results,
   aggregate,
   totalBankruptcies,
+  compareResults,
+  compareTotalBankruptcies = 0,
+  compareAggregate,
 }) => {
   const [enlargedCard, setEnlargedCard] = useState<string | null>(null);
   const [enlargedCardContent, setEnlargedCardContent] =
@@ -74,6 +82,32 @@ const BlackjackSimulation: React.FC<BlackjackSimulationProps> = ({
   const handleCardClick = (cardId: string, content: React.ReactNode) => {
     setEnlargedCard(enlargedCard === cardId ? null : cardId);
     setEnlargedCardContent(enlargedCard === cardId ? null : content);
+  };
+
+  const downloadBlob = (content: string, filename: string, type: string) => {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleExportJSON = () => {
+    downloadBlob(
+      JSON.stringify({ results, aggregate, totalBankruptcies, compareResults }, null, 2),
+      "blackjack-simulation-results.json",
+      "application/json"
+    );
+  };
+
+  const handleExportCSV = () => {
+    downloadBlob(
+      resultsToCsv(results),
+      "blackjack-simulation-results.csv",
+      "text/csv"
+    );
   };
 
   const closeEnlargedCard = () => {
@@ -87,26 +121,47 @@ const BlackjackSimulation: React.FC<BlackjackSimulationProps> = ({
         <h1 className="text-white font-bold text-4xl">
           Blackjack Simulation Results
         </h1>
-        <Button
-          size="lg"
-          onClick={() => window.location.reload()}
-          sx={{
-            fontSize: ["10px", "16px", "18px"],
-          }}
-        >
-          Run new simulation
-        </Button>
+        <div className="flex gap-2">
+          <Button size="sm" onClick={handleExportJSON} colorScheme="green">
+            Export JSON
+          </Button>
+          <Button size="sm" onClick={handleExportCSV} colorScheme="teal">
+            Export CSV
+          </Button>
+          <Button
+            size="lg"
+            onClick={() => window.location.reload()}
+            sx={{
+              fontSize: ["10px", "16px", "18px"],
+            }}
+          >
+            Run new simulation
+          </Button>
+        </div>
       </div>
 
       {results && aggregate && (
         <div className="bg-bg-grey m-5 justify-center md:justify-normal">
           <GeneralStats
             results={results}
+            aggregate={aggregate}
             totalBankruptcies={totalBankruptcies}
             numGames={initialData.numGames}
             numSimulations={initialData.numSimulations}
             initialBankroll={initialData.initialBankroll}
+            title="Spread A"
           />
+          {compareResults && compareAggregate && (
+            <GeneralStats
+              results={compareResults}
+              aggregate={compareAggregate}
+              totalBankruptcies={compareTotalBankruptcies}
+              numGames={initialData.numGames}
+              numSimulations={initialData.numSimulations}
+              initialBankroll={initialData.initialBankroll}
+              title="Spread B (comparison)"
+            />
+          )}
           <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={4} m={5}>
             <GridItem>
               <EnlargingCard
@@ -259,12 +314,9 @@ const BlackjackSimulation: React.FC<BlackjackSimulationProps> = ({
         </div>
       )}
       {enlargedCard && enlargedCardContent && (
-        <>
-          <p>sdsd</p>
-          <EnlargedCardPortal onClose={closeEnlargedCard}>
-            {enlargedCardContent}
-          </EnlargedCardPortal>
-        </>
+        <EnlargedCardPortal onClose={closeEnlargedCard}>
+          {enlargedCardContent}
+        </EnlargedCardPortal>
       )}
     </div>
   );

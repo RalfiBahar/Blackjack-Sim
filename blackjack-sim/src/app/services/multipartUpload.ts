@@ -1,54 +1,23 @@
-import AWS from "aws-sdk";
+// S3 multipart upload helpers — disabled until AWS SDK v3 migration.
+// Set AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION to enable.
 
-const s3 = new AWS.S3({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: process.env.AWS_REGION,
-});
-const BUCKET_NAME = "blackjack-sim-cache";
-
-export const initiateMultipartUpload = async (key: string) => {
-  const params = {
-    Bucket: BUCKET_NAME,
-    Key: key,
-    ContentType: "application/json",
-  };
-
-  const { UploadId } = await s3.createMultipartUpload(params).promise();
-  return UploadId;
+export const initiateMultipartUpload = async (
+  _key: string
+): Promise<string | undefined> => {
+  return undefined;
 };
 
 export const uploadPart = async (
-  key: string,
-  uploadId: string,
-  partNumber: number,
-  data: Buffer | Uint8Array | Blob | string
-) => {
-  const params = {
-    Bucket: BUCKET_NAME,
-    Key: key,
-    PartNumber: partNumber,
-    UploadId: uploadId,
-    Body: data,
-  };
-
-  const { ETag } = await s3.uploadPart(params).promise();
-  return ETag;
+  _key: string,
+  _uploadId: string,
+  _partNumber: number,
+  _data: Buffer | Uint8Array | Blob | string
+): Promise<string | undefined> => {
+  return undefined;
 };
 
 export const completeMultipartUpload = async (
-  key: string,
-  uploadId: string,
-  parts: { ETag: string; PartNumber: number }[]
-) => {
-  const params = {
-    Bucket: BUCKET_NAME,
-    Key: key,
-    UploadId: uploadId,
-    MultipartUpload: {
-      Parts: parts,
-    },
-  };
-
-  await s3.completeMultipartUpload(params).promise();
-};
+  _key: string,
+  _uploadId: string,
+  _parts: { ETag: string; PartNumber: number }[]
+): Promise<void> => {};

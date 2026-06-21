@@ -1,50 +1,117 @@
-# ![Logo](./blackjack-sim/public/logo.png)
-
 # Blackjack Simulator
 
-Welcome to the **Blackjack Simulator**! This project allows users to simulate millions of blackjack games, providing insights into the performance of optimal strategies, card counting, and other techniques. The final results are displayed through dynamic charts, offering users a deep analysis of blackjack gameplay.
+Monte Carlo blackjack simulator with **Hi-Lo card counting**, customizable **betting spreads**, and interactive **Chart.js analytics**.
 
-## Live Demo
-
-You can access the live demo of the application at: [blackjack-sim.com](https://blackjack-sim.com)
+**Live demo:** [blackjack-sim.com](https://blackjack-sim.com) · **Repo:** [github.com/RalfiBahar/Blackjack-Sim](https://github.com/RalfiBahar/Blackjack-Sim)
 
 ---
 
-## Features
+## What it does
 
-- **Simulate Millions of Blackjack Games**: Run simulations using various strategies, including card counting, and view aggregated and mean statistics.
-- **Full-Stack Web Application**: Built with a React.js frontend and a RESTful Express API backend.
-- **Statistics and Charts**: Visualize the final results through interactive charts for a clear understanding of strategy outcomes.
-- **Custom Caching with AWS S3**: Efficiently handle large-scale simulations by caching results in AWS S3, ensuring fast data retrieval and improved performance.
+- Simulates thousands of blackjack sessions with basic strategy and running-count bet sizing
+- Aggregates Monte Carlo runs and charts EV, house edge, bankroll paths, running-count distributions, and more
+- Lets you edit the betting spread per running-count bucket in advanced settings
 
-## Summary
+---
 
-This blackjack simulator utilizes optimal (or basic) strategy and card counting to simulate games of blackjack. It allows you to decide the number of games to simulate, ensuring flexibility. The simulator also implements a betting strategy based on the running count, adjusting bets as the game progresses. Upon completion, it displays essential statistics such as expected value, profit, win rate, and other aggregated data, helping you evaluate the effectiveness of the chosen strategy.
+## Repository structure
 
-## Technology Stack
+| Path | Role |
+|------|------|
+| [`blackjack-sim/`](blackjack-sim/) | **Production app** — Next.js 14, TypeScript simulation engine, API routes |
+| [`blackjack-sim-python/`](blackjack-sim-python/) | Legacy Streamlit prototype (reference) |
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | System design and data flow |
+| [`docs/KNOWN-ISSUES.md`](docs/KNOWN-ISSUES.md) | Verified bugs and gaps |
+| [`docs/resume-packaging.md`](docs/resume-packaging.md) | Portfolio bullets and demo script |
+| [`COMPLETION.md`](COMPLETION.md) | Agent-loop stop condition and remaining goals |
 
-- **Frontend**:
+---
 
-  - [Next.js](https://nextjs.org/) – React framework for server-side rendering and static site generation
-  - [Typescript](https://www.typescriptlang.org/) – Superset of JavaScript providing type safety
-  - [Tailwind CSS](https://tailwindcss.com/) – Utility-first CSS framework for styling
+## Quick start
 
-- **Backend**:
-  - [Express.js](https://expressjs.com/) – Web framework for Node.js to create RESTful APIs
-  - [Python](https://www.python.org/) – Simulating blackjack games and calculating strategies
-  - [AWS S3](https://aws.amazon.com/s3/) – Cloud storage for caching large tasks and results
+```bash
+cd blackjack-sim
+npm install
+npm run dev
+```
 
-## How to Use
+Open [http://localhost:3000/simulator](http://localhost:3000/simulator).
 
-1. Navigate to the simulator page.
-2. Choose a strategy to simulate, such as basic blackjack or card counting.
-3. Set the number of simulations.
-4. Click "Run Simulation" and watch the charts populate with statistics!
+```bash
+npm run build   # production build
+npm run lint    # eslint
+```
+
+Optional AWS env vars (S3 cache — currently disabled in routes):
+
+```
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_REGION=
+```
+
+---
+
+## Technology stack
+
+| Layer | Tech |
+|-------|------|
+| Frontend | Next.js 14 App Router, React 18, Chakra UI, Tailwind CSS |
+| Charts | Chart.js, react-chartjs-2 |
+| Simulation | TypeScript modules (`run_simulation.ts`, `BlackjackGame.ts`) |
+| API | Next.js Route Handlers (`/api/runSimulation`) |
+| Deploy | Vercel (+ optional AWS S3 cache) |
+| Legacy | Python Streamlit + matplotlib |
+
+> Simulations run in-process via Next.js API routes — no separate backend service.
+
+---
+
+## Agent platform (this server)
+
+This repo is registered for autonomous agent sessions:
+
+```bash
+agent-work blackjack-sim "Work through COMPLETION.md."
+agent-loop blackjack-sim          # rate-limit-aware loop
+agent-session-loop blackjack-sim  # tmux background
+```
+
+Project path: `/srv/projects/blackjack-sim` · Stop phrase: **`BLACKJACK COMPLETE — stopping.`**
+
+Run verification:
+
+```bash
+bash scripts/check-completion.sh
+bash scripts/check-completion.sh --code   # build/lint only
+```
+
+---
+
+## Documentation
+
+- [Architecture](docs/ARCHITECTURE.md) — request flow, engine rules, caching
+- [Known issues](docs/KNOWN-ISSUES.md) — audit findings and fix priority
+- [Roadmap](ROADMAP.md) · [Tasks](TASKS.md) · [Changelog](CHANGELOG.md)
+
+---
+
+## Demo
+
+| | |
+|---|---|
+| **Local** | `npm run dev` → http://localhost:3000 |
+| **Production** | https://blackjack-sim.com/simulator |
+| **Screenshot** | _Add `docs/images/simulator-results.png` (Phase D4)_ |
+
+---
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for more details.
+MIT — see [LICENSE](LICENSE).
 
 ---
 
-Happy simulating! If you have any questions or issues, feel free to reach out through the [Issues](https://github.com/yourusername/blackjack-simulator/issues) section.
+## Author
+
+Ralfi Bahar — [blackjack-sim.com](https://blackjack-sim.com)

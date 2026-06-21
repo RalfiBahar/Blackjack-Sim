@@ -1,5 +1,7 @@
 export const GAMES_PLAYED_PER_HOUR = 200;
 export const BET_MULTIPLIER = 0.001;
+/** Fraction of shoe dealt before reshuffle (0–1). Default 75% penetration. */
+export const DEFAULT_PENETRATION = 0.75;
 
 export const themeColors = {
   LIGHT_GREY: "#2F333E",

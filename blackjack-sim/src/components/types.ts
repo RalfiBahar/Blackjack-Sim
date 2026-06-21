@@ -4,6 +4,12 @@ export interface SimulationParams {
   numSimulations: number;
   bettingSpread: BettingValues | undefined;
   numberOfDecks: number;
+  /** Shoe penetration 0.5–0.95 (fraction of shoe dealt before reshuffle). */
+  penetration?: number;
+  /** Optional second spread for A/B comparison. */
+  compareBettingSpread?: BettingValues;
+  /** Run Monte Carlo in browser Web Worker pool (parallel). */
+  useClientWorkers?: boolean;
 }
 
 export interface InitialData extends SimulationParams {
